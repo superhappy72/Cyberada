@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joseph</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(180deg,#001f44 0%, #003a8c 50%, #0050c7 100%);
+            color: #e6eef6;
+        }
+        .box {
+            background: #000;
+            color: #ececec;
+            padding: 12px 20px;
+            border-radius: 8px;
+            width: 100%;
+            height: 90px;
+            margin: 0 auto;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            outline: 4px solid rgba(255,255,255,0.03);
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .box-left { display:flex; align-items:center; gap:12px; }
+        .box-right { display:flex; align-items:center; gap:12px; }
+
+        .search-input {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.03);
+            color: #fff;
+            min-width: 180px;
+        }
+        .search-input::placeholder { color: rgba(255,255,255,0.6); }
+
+        .dropdown { position: relative; }
+        .dropbtn {
+            background: transparent;
+            color: #ececec;
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #111;
+            min-width: 140px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+            border-radius: 6px;
+            overflow: hidden;
+            z-index: 10;
+        }
+        .dropdown-content a {
+            color: #eee;
+            padding: 8px 12px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a:hover { background: rgba(255,255,255,0.03); }
+
+        .video-background-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #myVideo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: auto;
+            height: 100%;
+            min-width: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.35);
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+
+        .page-section {
+            --bg-image: none;
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0;
+            box-sizing: border-box;
+            color: #e6eef6;
+            border-radius: 12px;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, rgba(0,12,40,0.25), rgba(0,6,30,0.15)),
+                var(--bg-image);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+        }
+        .page-section .section-box {
+            background: linear-gradient(180deg, rgba(2,18,60,0.72), rgba(2,18,60,0.55));
+            padding: 36px;
+            border-radius: 8px;
+            margin: 18px;
+        }
+        .page-section h2 {
+            font-size: 30px;
+            margin: 0 0 12px 0;
+            color: #fff;
+            letter-spacing: 0.4px;
+        }
+        .page-section p {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #dbeaf6;
+            margin: 0;
+        }
+        .section--accent { background-blend-mode: overlay; background-color: rgba(30,144,255,0.06); }
+        .section--ir     { background-blend-mode: overlay; background-color: rgba(255,122,89,0.06); }
+        .section--ethics { background-blend-mode: overlay; background-color: rgba(240,196,25,0.05); }
+        .section--ciso   { background-blend-mode: overlay; background-color: rgba(124,58,237,0.05); }
+        .section--webinars{ background-blend-mode: overlay; background-color: rgba(59,178,115,0.05); }
+        .webinar-list { margin-top: 18px; display:block; }
+        .webinar-item { padding: 14px 16px; background: rgba(255,255,255,0.02); margin-bottom:12px; border-radius:10px; color:#eaf5ff; }
+        .webinar-item h3 { margin:0 0 6px 0; font-size:18px; color:#fff; }
+        .webinar-item p { margin:0; font-size:14px; color:#d7e9ff; }
+
+        @media (max-width:600px) {
+            .box { height: auto; padding: 12px; }
+        }
+        @media (max-width:720px){
+            .page-section { padding: 20px 12px; }
+            .page-section h2 { font-size:22px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="box-left">
+            <img id="logo" src="Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg" alt="CS-Sensei logo" height="60">
+            <p>CS-Sensei CyberSecurity Mentorship Program</p>
+        </div>
+
+        <div class="box-right" aria-hidden="false">
+            <form id="siteSearchForm" role="search" onsubmit="return false;">
+                <input id="siteSearchInput" class="search-input" type="search" placeholder="Search site..." aria-label="Search site">
+            </form>
+
+            <a class="dropbtn" href="./Cybersecurity Terms/index.html" style="text-decoration:none; display:inline-block; padding:6px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.06); color:#ececec; background:transparent;">TERMS</a>
+
+            <div class="dropdown" aria-haspopup="true">
+                <button class="dropbtn" type="button">Profile ▾</button>
+                <div class="dropdown-content" role="menu">
+                    <a href="#">Sign in</a>
+                    <a href="#">Settings</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="video-background-container">
+        <video autoplay muted loop playsinline id="myVideo" aria-hidden="true">
+            <source src="Background.mp4" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
+
+        <div class="content">
+            <h1>CyberSecurity</h1>
+            <p>Learn practical skills, get mentorship and grow your security career.</p>
+        </div>
+    </div>
+
+    <main>
+        <section class="page-section section--accent" id="what-different">
+            <div class="section-box">
+                <h2>What makes us different?</h2>
+                <p>Our mentors are independent, objective, and ethics‑focused. We demonstrate by example why it's critically important to build TRUST, not just be proficient with TOOLS.</p>
+            </div>
+        </section>
+
+        <section class="page-section section--ir" id="incident-response">
+            <div class="section-box">
+                <h2>Real Incident Response Experience</h2>
+                <p>Our mentorship team is unique in the industry, offering mentees REAL EXPERIENCE through our Incident Response Team. Email us for info and opportunities to participate in real case work.</p>
+            </div>
+        </section>
+
+        <section class="page-section section--ethics" id="code-of-ethics">
+            <div class="section-box">
+                <h2>Code of Ethics</h2>
+                <p>Mentors and mentees alike agree to abide by our Code of Ethics. Ethical decision-making is integrated into every lesson, exercise, and assessment.</p>
+            </div>
+        </section>
+
+        <section class="page-section section--ciso" id="think-like-ciso">
+            <div class="section-box">
+                <h2>Think & Speak Like Your CISO</h2>
+                <p>Learn to think and speak like your CISO. We cover activities from the perspective of a service provider and focus on "Business Risk", "Bottom Line", and "Lessons Learned".</p>
+            </div>
+        </section>
+
+        <section class="page-section section--webinars" id="recent-webinars">
+            <div class="section-box">
+                <h2>Recent Webinars</h2>
+                <div class="webinar-list">
+                 <article class="webinar-item">
+                     <h3>CyberSecurity as a Career in 2023</h3>
+                     <p>Overview of career paths, certifications, and market demand — recorded webinar.</p>
+                 </article>
+
+                 <article class="webinar-item">
+                     <h3>How To Get Experience BEFORE You Get The Job!</h3>
+                     <p>Practical steps and programs to build demonstrable experience and a portfolio that hiring managers notice.</p>
+                 </article>
+
+                 <article class="webinar-item">
+                     <h3>Many Skills are Needed for CyberSecurity Jobs!</h3>
+                     <p>From communication to toolchains, the webinar explores the variety of skills hiring teams expect.</p>
+                 </article>
+
+                 <article class="webinar-item">
+                     <h3>ALWAYS ask "SHOULD I?!?" - The Ethics of CyberSecurity</h3>
+                     <p>A deep dive into ethical decision-making with real-world case studies used in our mentorship practice.</p>
+                 </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+	(function(){
+		function findFirst(candidates, cb){
+			let i = 0;
+			function next(){
+				if (i >= candidates.length) return;
+				const url = candidates[i++];
+				const img = new Image();
+				img.onload = () => cb(url);
+				img.onerror = next;
+				img.src = url;
+			}
+			next();
+		}
+
+		const logo = document.getElementById('logo');
+		if (logo) {
+			findFirst([
+				'Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg',
+				'./Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg',
+				'../Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg'
+			], src => { logo.src = src; });
+		}
+
+		(function(){
+			const video = document.getElementById('myVideo');
+			if (!video) return;
+			const source = video.querySelector('source');
+			const candidates = [
+				'Background.mp4',
+				'./Background.mp4',
+				'./cyberwebsite/Background.mp4',
+				'../cyberwebsite/Background.mp4'
+			];
+			findFirst(candidates, src => { source.src = src; video.load(); });
+		})();
+
+		(function(){
+			const sections = [
+				{ id: 'what-different', names: ['what-different','mentors','trust','tools'] },
+				{ id: 'incident-response', names: ['incident-response','incident_response','experience','customer-experience','ir'] },
+				{ id: 'code-of-ethics', names: ['code-of-ethics','ethics','code'] },
+				{ id: 'think-like-ciso', names: ['think-like-ciso','ciso','business-risk'] },
+				{ id: 'recent-webinars', names: ['recent-webinars','webinars','webinar'] }
+			];
+			const exts = ['.jpg','.png','.webp'];
+			const prefixes = ['Images/','./Images/','../Images/','./cyberwebsite/Images/','../cyberwebsite/Images/'];
+
+			sections.forEach(sec => {
+				const candidates = [];
+				sec.names.forEach(n => prefixes.forEach(p => exts.forEach(e => candidates.push(p + n + e))));
+				findFirst(candidates, src => {
+					const el = document.getElementById(sec.id);
+					if (el) el.style.setProperty('--bg-image', `url("${src}")`);
+				});
+			});
+		})();
+
+		(function(){
+			const form = document.getElementById('siteSearchForm');
+			const input = document.getElementById('siteSearchInput');
+			if (!form || !input) return;
+			input.addEventListener('keydown', function(e){
+				if (e.key !== 'Enter') return;
+				e.preventDefault();
+				const q = input.value.trim();
+				if (!q) return;
+				const payload = JSON.stringify({ query: q, ts: Date.now() });
+				try { localStorage.setItem('cyberwebsite_search', payload); } catch {}
+				document.dispatchEvent(new CustomEvent('siteSearch', { detail: { query: q } }));
+			});
+			window.addEventListener('storage', function(e){
+				if (e.key !== 'cyberwebsite_search' || !e.newValue) return;
+				try {
+					const data = JSON.parse(e.newValue);
+					document.dispatchEvent(new CustomEvent('siteSearch', { detail: data }));
+				} catch (err) {}
+			});
+		})();
+	})();
+    </script>
+</body>
+</html>
