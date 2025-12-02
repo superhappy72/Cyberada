@@ -189,7 +189,6 @@
     <div class="video-background-container">
         <video autoplay muted loop playsinline id="myVideo" aria-hidden="true">
             <source src="Background.mp4" type="video/mp4">
-            Your browser does not support HTML5 video.
         </video>
 
         <div class="content">
@@ -255,86 +254,6 @@
         </section>
     </main>
 
-    <script>
-	(function(){
-		function findFirst(candidates, cb){
-			let i = 0;
-			function next(){
-				if (i >= candidates.length) return;
-				const url = candidates[i++];
-				const img = new Image();
-				img.onload = () => cb(url);
-				img.onerror = next;
-				img.src = url;
-			}
-			next();
-		}
-
-		const logo = document.getElementById('logo');
-		if (logo) {
-			findFirst([
-				'Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg',
-				'./Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg',
-				'../Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg'
-			], src => { logo.src = src; });
-		}
-
-		(function(){
-			const video = document.getElementById('myVideo');
-			if (!video) return;
-			const source = video.querySelector('source');
-			const candidates = [
-				'Background.mp4',
-				'./Background.mp4',
-				'./cyberwebsite/Background.mp4',
-				'../cyberwebsite/Background.mp4'
-			];
-			findFirst(candidates, src => { source.src = src; video.load(); });
-		})();
-
-		(function(){
-			const sections = [
-				{ id: 'what-different', names: ['what-different','mentors','trust','tools'] },
-				{ id: 'incident-response', names: ['incident-response','incident_response','experience','customer-experience','ir'] },
-				{ id: 'code-of-ethics', names: ['code-of-ethics','ethics','code'] },
-				{ id: 'think-like-ciso', names: ['think-like-ciso','ciso','business-risk'] },
-				{ id: 'recent-webinars', names: ['recent-webinars','webinars','webinar'] }
-			];
-			const exts = ['.jpg','.png','.webp'];
-			const prefixes = ['Images/','./Images/','../Images/','./cyberwebsite/Images/','../cyberwebsite/Images/'];
-
-			sections.forEach(sec => {
-				const candidates = [];
-				sec.names.forEach(n => prefixes.forEach(p => exts.forEach(e => candidates.push(p + n + e))));
-				findFirst(candidates, src => {
-					const el = document.getElementById(sec.id);
-					if (el) el.style.setProperty('--bg-image', `url("${src}")`);
-				});
-			});
-		})();
-
-		(function(){
-			const form = document.getElementById('siteSearchForm');
-			const input = document.getElementById('siteSearchInput');
-			if (!form || !input) return;
-			input.addEventListener('keydown', function(e){
-				if (e.key !== 'Enter') return;
-				e.preventDefault();
-				const q = input.value.trim();
-				if (!q) return;
-				const payload = JSON.stringify({ query: q, ts: Date.now() });
-				try { localStorage.setItem('cyberwebsite_search', payload); } catch {}
-				document.dispatchEvent(new CustomEvent('siteSearch', { detail: { query: q } }));
-			});
-			window.addEventListener('storage', function(e){
-				if (e.key !== 'cyberwebsite_search' || !e.newValue) return;
-				try {
-					const data = JSON.parse(e.newValue);
-					document.dispatchEvent(new CustomEvent('siteSearch', { detail: data }));
-				} catch (err) {}
-			});
-		})();
-	})();
-    </script>
+   
 </body>
 </html>
