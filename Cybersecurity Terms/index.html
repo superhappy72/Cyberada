@@ -4,101 +4,662 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<title>Cybersecurity Terms</title>
+	<!-- FAVICON: adjust path if your .ico file is in a different folder -->
+	<link rel="icon" href="../Images/senseifaviocon.ico">
 	<style>
 		body { margin:0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Open Sans', sans-serif; background:#000; color:#e6eef6; }
+
+		/* ── Topbar ── */
 		.topbar {
-			background:#000; color:#ececec; display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-bottom:1px solid rgba(255,255,255,0.03);
+			background:#000; color:#ececec; display:flex; align-items:center;
+			justify-content:space-between; padding:12px 18px;
+			border-bottom:1px solid rgba(255,255,255,0.06); position:sticky; top:0; z-index:100;
 		}
 		.topbar .left { display:flex; align-items:center; gap:12px; }
 		.topbar img { height:46px; cursor:pointer; }
 		.topbar .right { display:flex; align-items:center; gap:10px; }
 		.topbar .btn { color:#ececec; text-decoration:none; padding:6px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.06); }
+
+		/* ── Search wrapper ── */
+		.search-wrapper { position:relative; }
+		.search-wrapper input[type="search"] {
+			padding:6px 10px; border-radius:6px;
+			border:1px solid rgba(255,255,255,0.12);
+			background:rgba(255,255,255,0.04); color:#fff;
+			width:200px; outline:none;
+			transition: border-color 0.2s;
+		}
+		.search-wrapper input[type="search"]:focus { border-color:rgba(255,255,255,0.35); }
+		.search-wrapper input[type="search"]::placeholder { color:rgba(255,255,255,0.45); }
+
+		/* ── Autocomplete dropdown ── */
+		#suggestions {
+			display:none;
+			position:absolute;
+			top:calc(100% + 4px);
+			left:0;
+			min-width:260px;
+			background:#111;
+			border:1px solid rgba(255,255,255,0.1);
+			border-radius:8px;
+			overflow:hidden;
+			box-shadow:0 8px 24px rgba(0,0,0,0.6);
+			z-index:999;
+			max-height:320px;
+			overflow-y:auto;
+		}
+		#suggestions .suggestion-item {
+			padding:10px 14px;
+			cursor:pointer;
+			color:#ddeeff;
+			font-size:14px;
+			border-bottom:1px solid rgba(255,255,255,0.04);
+			transition: background 0.15s;
+		}
+		#suggestions .suggestion-item:last-child { border-bottom:none; }
+		#suggestions .suggestion-item:hover,
+		#suggestions .suggestion-item.active { background:rgba(255,255,255,0.08); }
+		#suggestions .suggestion-item mark {
+			background:transparent;
+			color:#7eb8ff;
+			font-weight:600;
+		}
+		#suggestions .no-results {
+			padding:10px 14px;
+			color:rgba(255,255,255,0.4);
+			font-size:14px;
+			font-style:italic;
+		}
+
+		/* ── Main content ── */
 		main.terms { max-width:1100px; margin:28px auto; padding:20px; }
 		.terms p { color:#cfdff0; line-height:1.6; }
-		.footer-topbar { position:static; margin-top:48px; border-top:1px solid rgba(255,255,255,0.03); }
-		@media (max-width:720px){ .topbar img{height:40px;} }
+
+		/* ── Term blocks ── */
+		.term-block { margin-bottom:28px; scroll-margin-top:80px; }
+		.term-block .term-name {
+			font-size:17px; font-weight:600; color:#ffffff;
+			margin-bottom:6px; display:block;
+		}
+		.term-block .term-def {
+			color:#cfdff0; line-height:1.7; margin:0;
+			font-size:15px;
+		}
+		.term-block .term-def mark {
+			background:rgba(126,184,255,0.22);
+			color:#fff;
+			border-radius:3px;
+			padding:0 2px;
+		}
+
+		hr.divider { border:none; height:1px; background:rgba(255,255,255,0.05); margin:12px 0 24px; }
+
+		/* ── No results message ── */
+		#noResults { display:none; color:rgba(255,255,255,0.4); font-style:italic; margin-top:20px; }
+
+		@media (max-width:720px){ .topbar img{height:40px;} .search-wrapper input{ width:140px; } }
 	</style>
 </head>
 <body>
-	<header class="topbar">
-		<div class="left">
-			<a href="../Index.html" title="Back to Home">
-				<img src="../Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg" alt="CS-Sensei logo">
-			</a>
-			<span>CS‑Sensei CyberSecurity Mentorship Program</span>
-		</div>
-		<div class="right">
-			<form id="siteSearchForm2" role="search" onsubmit="return false;">
-				<input type="search" placeholder="Search site..." style="padding:6px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:#fff;">
-			</form>
-			<a class="btn" href="../Index.html">Home</a>
-		</div>
-	</header>
 
-	<main class="terms">
-		<p style="margin-top:8px;">Placeholder page terms and glossary.</p>
-		<hr style="border:none;height:1px;background:rgba(255,255,255,0.03);margin:18px 0;">
-		<p>
+<header class="topbar">
+	<div class="left">
+		<a href="../Index.html" title="Back to Home">
+			<img src="../Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg" alt="CS-Sensei logo">
+		</a>
+		<span>CS&#8209;Sensei CyberSecurity Mentorship Program</span>
+	</div>
+	<div class="right">
+		<div class="search-wrapper">
+			<input id="termSearch" type="search" placeholder="Search terms..." autocomplete="off" aria-label="Search cybersecurity terms" aria-autocomplete="list" aria-controls="suggestions">
+			<div id="suggestions" role="listbox"></div>
+		</div>
+		<a class="btn" href="../Index.html">Home</a>
+	</div>
+</header>
 
-Why put these terms in a website instead of Google-ing them?
-<br>
-<br>
-<br>
-Exposure
-<br>
-Extent to which an organization and/or stakeholder is subject to a risk; The combination of likelihood and impact levels for a risk.
-<br>
-<br>
-Intrusion
-<br>
-A security event that constitutes a security incident in which an intruder attempts to gain access to a system without having authorization to do so.			
-<br>
-<br>
-Risk Mitigation
-<br>
-Prioritizing, evaluating, and implementing the appropriat risk-reducing controls/countermeasures recommended from the risk managment process. A subset of risk response
-<br>
-<br>
-Honeypot
-<br>
-A decoy system or resource designed to attract and trap potential attackers
-<br>
-<br>
-IOT: Internet of Things
-<br>
-Everyday objects that require a network connection.
-<br>
-<br>
-Backdoor
-<br>
-A backdoor is a way to gain unauthorized access to a computer system, allowing users to bypass normal security measures and gain high level user access. From there, attackers could potentially steal personal data, install unwanted software, or hijack devices.
-<br>
-<br>
-Ciphertext
-<br>
-Data in its encrypted from.
-<br>
-<br>
-Advanced Persistent Threat (APT)
-<br>
-An adversary with sophisticated levels of expertise and significant resources, allowing it through the use of multiple different attack vectors (E.g., cyber physical, and deception) to generate opportunities to establish and extend its presence within the information technology infrastructure of organizations for purposes of continually exfilrating information and or to undermine or impede critical aspects of a mission, program, or organization, or place itself in a position to do so in the future; moreover. the advanced persistent threat pursues its objectives repeatedly opver an extended period of time, adapting to a defenders efforts to resist it, and with determination to maintain the level of interaction needed to execute its objectivel.
-<br>
-<br>
-Malware
-<br>
-Hardware, Firmwar, or software that is intentionally included or inserted in a system for harmful purpose.
- <br>
- <br>
-  Encryption
- <br> 
-  The process of usuing Ciphertext* to convert plaintext into encrpted state to protect important info. The reverse of encryption is decryption: converting encrypted text into plaintext.
-			<br>
-  <br>
-   Handshake
-  
- <br>
-  Protocol dialouge between two systems for indentifying and authenticating themselves to each other, or for synchronizing their operations with eachother. </p>
-	</main>
+<main class="terms">
+	<p style="margin-top:8px; color:rgba(255,255,255,0.5); font-size:14px;">Cybersecurity terms and glossary — A to Z</p>
+	<hr class="divider">
+
+	<div id="termList">
+
+		<div class="term-block" id="term-apt">
+			<span class="term-name">Advanced Persistent Threat (APT)</span>
+			<p class="term-def">An adversary with sophisticated levels of expertise and significant resources, allowing it through the use of multiple different attack vectors (e.g., cyber, physical, and deception), to generate opportunities to establish and extend its presence within the information technology infrastructure of organizations for purposes of continually exfiltrating information and/or to undermine or impede critical aspects of a mission, program, or organization, or place itself in a position to do so in the future; moreover, the advanced persistent threat pursues its objectives repeatedly over an extended period of time, adapting to a defender’s efforts to resist it, and with determination to maintain the level of interaction needed to execute its objectives.</p>
+		</div>
+
+		<div class="term-block" id="term-authentication">
+			<span class="term-name">Authentication</span>
+			<p class="term-def">The process of proving the claimed identity of an individual user, machine, software component or any other entity.  Typical authentication mechanisms include conventional password schemes, biometrics devices, cryptographic methods, and onetime passwords (usually implemented with token based cards.)
+
+Verifying the identity of a user, process, or device, often as a prerequisite to allowing access to resources in an information system.
+
+The process of verifying the integrity of data that has been stored, transmitted, or otherwise exposed to possible unauthorized access.
+</p>
+		</div>
+
+		<div class="term-block" id="term-authorization">
+			<span class="term-name">Authorization</span>
+			<p class="term-def">The process of verifying that a requested action or service is approved for a specific entity.
+
+Access privileges granted to a user, program, or process or the act of granting those privileges.
+</p>
+		</div>
+
+		<div class="term-block" id="term-availability">
+			<span class="term-name">Availability</span>
+			<p class="term-def">Ensuring timely and reliable access to and use of information.</p>
+		</div>
+
+		<div class="term-block" id="term-backdoor">
+			<span class="term-name">Backdoor</span>
+			<p class="term-def">A backdoor is a way to gain unauthorized access to a computer system, allowing users to bypass normal security measures and gain high level user access.  
+
+From there, attackers could potentially steal personal data, install unwanted software, or hijack devices.
+</p>
+		</div>
+
+		<div class="term-block" id="term-blacklist">
+			<span class="term-name">Blacklist</span>
+			<p class="term-def">A list of discrete entities, such as hosts, email addresses, network port numbers, runtime processes, or applications, that have been previously determined to be associated with malicious activity. 
+List of words that have been pre-defined as being unacceptable for transmission and may be used in conjunction with a clean word list to avoid false negatives (e.g., secret within secretary).
+Also known as "dirty word list".
+</p>
+		</div>
+
+		<div class="term-block" id="term-blast-radius">
+			<span class="term-name">Blast Radius</span>
+			<p class="term-def">The potential impact of a security breach or vulnerability on an organization or system. 
+The extent of damage that can occur if a security incident spreads beyond its initial point of origin.
+</p>
+		</div>
+
+		<div class="term-block" id="term-blue-team">
+			<span class="term-name">Blue Team</span>
+			<p class="term-def">A team that:
+-Conducts operational network vulnerability evaluations and provide mitigation techniques to customers who have a need for an independent technical review of their network security posture. 
+-Identifies security threats and risks in the operating environment, and in cooperation with the customer, analyzes the network environment and its current state of security readiness. 
+-Provides recommendations that integrate into an overall security solution to increase the customer's CS readiness posture.
+</p>
+		</div>
+
+		<div class="term-block" id="term-cia">
+			<span class="term-name">CIA Triad</span>
+			<p class="term-def">The CIA Triad is a model in information security that outlines three core principles: Confidentiality, Integrity, and Availability. These principles are fundamental to protecting information and systems from various threats.
+</p>
+		</div>
+
+		<div class="term-block" id="term-ciphertext">
+			<span class="term-name">Ciphertext</span>
+			<p class="term-def">AKA cyphertext. Data in its encrypted form.
+</p>
+		</div>
+
+		<div class="term-block" id="term-cve">
+			<span class="term-name">Common Vulnerabilities and Exposures (CVE)</span>
+			<p class="term-def">A dictionary of common names for publicly known information system vulnerabilities.
+A list of entries, each containing a unique identification number, a description, and at least one public reference—for publicly known cybersecurity vulnerabilities [CVENVD]. This list feeds the National Vulnerability Database (NVD).
+</p>
+		</div>
+
+		<div class="term-block" id="term-cvss">
+			<span class="term-name">Common Vulnerability Scoring System (CVSS)</span>
+			<p class="term-def">A system for measuring the relative severity of software flaw vulnerabilities.
+An SCAP specification for communicating the characteristics of vulnerabilities and measuring their relative severity.
+</p>
+		</div>
+
+		<div class="term-block" id="term-confidentiality">
+			<span class="term-name">Confidentiality</span>
+			<p class="term-def">Preserving authorized restrictions on information access and disclosure, including means for protecting personal privacy and proprietary information.
+
+The ability to protect data so that unauthorized parties cannot view the data.
+</p>
+		</div>
+
+		<div class="term-block" id="term-cyber-incident">
+			<span class="term-name">Cyber Incident / Incident Response (IR)</span>
+			<p class="term-def">Cyber Incident
+An occurrence that results in actual or potential jeopardy to the confidentiality, integrity, or availability of an information system or the information the system processes, stores, or transmits or that constitutes a violation or imminent threat of violation of security policies, security procedures, or acceptable use policies. See cyber incident. (event, intrusion).
+
+Incident Response
+The processes to mitigate violations of security policies and recommended practices.
+</p>
+		</div>
+
+		<div class="term-block" id="term-kill-chain">
+			<span class="term-name">Cyber Kill Chain</span>
+			<p class="term-def">A model outlining the stages of a cyberattack, from initial reconnaissance to data exfiltration.
+</p>
+		</div>
+
+		<div class="term-block" id="term-cyber-threat">
+			<span class="term-name">Cyber-Threat</span>
+			<p class="term-def">Any circumstance or event with the potential to adversely impact organizational operations (including mission, functions, image, or reputation), organizational assets, or individuals through an information system via unauthorized access, destruction, disclosure, modification of information, and/or denial of service. Also, the potential for a threat source to successfully exploit a particular information system vulnerability.
+</p>
+		</div>
+
+		<div class="term-block" id="term-encryption">
+			<span class="term-name">Encryption</span>
+			<p class="term-def">The process of using ciphertext* to convert plaintext into an encrypted state to protect important info.
+
+The reverse of encryption is decryption: converting encrypted text into plaintext.
+</p>
+		</div>
+
+		<div class="term-block" id="term-exposure">
+			<span class="term-name">Exposure</span>
+			<p class="term-def">Extent to which an organization and/or stakeholder is subject to a risk; The combination of likelihood and impact levels for a risk.
+</p>
+		</div>
+
+		<div class="term-block" id="term-handshake">
+			<span class="term-name">Handshake</span>
+			<p class="term-def">Protocol dialogue between two systems for identifying and authenticating themselves to each other, or for synchronizing their operations with each other.</p>
+		</div>
+
+		<div class="term-block" id="term-hash">
+			<span class="term-name">Hash Function</span>
+			<p class="term-def">An algorithm that computes a numerical value (called the hash value) on a data file or electronic message that is used to represent that file or message, and depends on the entire contents of the file or message. 
+A hash function can be considered to be a fingerprint of the file or message.
+</p>
+		</div>
+
+		<div class="term-block" id="term-honeypot">
+			<span class="term-name">Honeypot</span>
+			<p class="term-def">A decoy system or resource designed to attract and trap potential attackers.
+</p>
+		</div>
+
+		<div class="term-block" id="term-incident">
+			<span class="term-name">Incident</span>
+			<p class="term-def">An occurrence that results in actual or potential jeopardy to the confidentiality, integrity, or availability of an information system or the information the system processes, stores, or transmits or that constitutes a violation or imminent threat of violation of security policies, security procedures, or acceptable use policies. See cyber incident. See also event, security-relevant, and intrusion. A violation or imminent threat of violation of computer security policies, acceptable use policies, or standard security practices.</p>
+		</div>
+
+		<div class="term-block" id="term-ioc">
+			<span class="term-name">Indicators of Compromise (IoC)</span>
+			<p class="term-def">Digital artifacts or evidence that point to a potential compromise. 
+Clues for security professionals to identify and investigate malicious activity, such as data breaches, insider threats, or malware attacks. 
+- Network-Based: unusual network traffic, suspicious IP addresses, or connections to known malicious domains
+- Host-Based: suspicious files, registry changes, or unusual processes
+- Behavioral: unauthorized access attempts or unusual login times
+</p>
+		</div>
+
+		<div class="term-block" id="term-integrity">
+			<span class="term-name">Integrity</span>
+			<p class="term-def">Guarding against improper information modification or destruction, and includes ensuring information non-repudiation and authenticity.
+</p>
+		</div>
+
+		<div class="term-block" id="term-intrusion">
+			<span class="term-name">Intrusion</span>
+			<p class="term-def">A security event that constitutes a security incident in which an intruder attempts to gain access to a system without having authorization to do so.
+</p>
+		</div>
+
+		<div class="term-block" id="term-iot">
+			<span class="term-name">IOT (Internet of Things)</span>
+			<p class="term-def">(Internet of Things) Everyday objects that require a network connection.
+</p>
+		</div>
+
+		<div class="term-block" id="term-leakage">
+			<span class="term-name">Leakage</span>
+			<p class="term-def">Also ‘Information Leakage’
+The intentional or unintentional release of information to an untrusted environment.
+</p>
+		</div>
+
+		<div class="term-block" id="term-least-privilege">
+			<span class="term-name">Least Privilege</span>
+			<p class="term-def">Also known as the “Principle of Least Privilege”. The security principle that a system should restrict the access privileges of users (or processes acting on behalf of users) to the minimum necessary to accomplish assigned tasks. Systems restrict to the minimum necessary for each user, and users are granted the minimum privileges necessary to accomplish functions specific to their role.
+</p>
+		</div>
+
+		<div class="term-block" id="term-malware">
+			<span class="term-name">Malware</span>
+			<p class="term-def">Hardware, firmware, or software that is intentionally included or inserted in a system for a harmful purpose.
+</p>
+		</div>
+
+		<div class="term-block" id="term-mac">
+			<span class="term-name">Media Access Control (MAC)</span>
+			<p class="term-def">Aka “MAC Address”
+A unique 48-bit value that is assigned to a particular wireless network interface by the manufacturer.
+</p>
+		</div>
+
+		<div class="term-block" id="term-metadata">
+			<span class="term-name">Metadata</span>
+			<p class="term-def">The information associated with a key that describes its specific characteristics, constraints, acceptable uses, ownership, etc. Sometimes called the key's attributes.
+</p>
+		</div>
+
+		<div class="term-block" id="term-mfa">
+			<span class="term-name">Multifactor Authentication (MFA)</span>
+			<p class="term-def">An authentication system that requires more than one distinct authentication factor for successful authentication. Multifactor authentication can be performed using a multifactor authenticator or by a combination of authenticators that provide different factors. Factors include: (i) something you know (e.g., password/personal identification number [PIN]); (ii) something you have (e.g., cryptographic identification device, token); or (iii) something you are (e.g., biometric).
+</p>
+		</div>
+
+		<div class="term-block" id="term-nvd">
+			<span class="term-name">National Vulnerability Database (NVD)</span>
+			<p class="term-def">CVE and NVD are two separate programs. The CVE List was launched by the MITRE Corporation as a community effort in 1999. The U.S. National Vulnerability Database (NVD) was launched by the National Institute of Standards and Technology (NIST) in 2005. The CVE List feeds NVD, which historically has built upon the information included in CVE Records to provide enhanced information for each record in its database. While separate, output from both programs is available to the public and free to use.
+</p>
+		</div>
+
+		<div class="term-block" id="term-non-repudiation">
+			<span class="term-name">Non-Repudiation</span>
+			<p class="term-def">In a general information security context, assurance that the sender of information is provided with proof of delivery, and the recipient is provided with proof of the sender's identity, so neither can later deny having process the information .
+</p>
+		</div>
+
+		<div class="term-block" id="term-on-path">
+			<span class="term-name">On-Path Attack</span>
+			<p class="term-def">aka “Man-In-The-Middle Attack”
+An attack in which an attacker is positioned between two communicating parties in order to intercept and/or alter data traveling between them. In the context of authentication, the attacker would be positioned between claimant and verifier, between registrant and CSP during enrollment, or between subscriber and CSP during authenticator binding.
+</p>
+		</div>
+
+		<div class="term-block" id="term-payload">
+			<span class="term-name">Payload</span>
+			<p class="term-def">In cybersecurity, a payload is the part of malware or a cyberattack that executes malicious activity, causing direct harm to a target system. It is the component that delivers the intended damage, such as data theft, system disruption, or unauthorized access. Examples of payloads include ransomware encryption routines, data exfiltration scripts, or destructive code that deletes files.</p>
+		</div>
+
+		<div class="term-block" id="term-pen-test">
+			<span class="term-name">Penetration Testing</span>
+			<p class="term-def">A test methodology in which assessors, typically working under specific constraints, attempt to circumvent or defeat the security features of a system.
+Testing that verifies the extent to which a system, device or process resists active attempts to compromise its security.
+Aka “Pentesting”
+</p>
+		</div>
+
+		<div class="term-block" id="term-porosity">
+			<span class="term-name">Porous / Porosity</span>
+			<p class="term-def">The degree to which a security system is vulnerable to attacks or breaches. It highlights weaknesses or gaps in a system's defenses, making it easier for malicious actors to penetrate. A porous security system is like a system with many small holes that, while individually small, collectively allow a significant amount of unauthorized access or damage. 
+Examples of how a system can be porous:
+- Weak passwords or authentication
+- Unpatched software
+- Poor access controls
+- Missing or inadequate security measures
+</p>
+		</div>
+
+		<div class="term-block" id="term-red-team">
+			<span class="term-name">Red Team</span>
+			<p class="term-def">A group authorized and organized to emulate a potential adversary’s attack or exploitation capabilities against an enterprise’s security posture. The Red Team’s objective is to improve enterprise cybersecurity by demonstrating the impacts of successful attacks and by demonstrating what works for the defenders (i.e., the Blue Team) in an operational environment. 
+Also known as Cyber Red Team.
+</p>
+		</div>
+
+		<div class="term-block" id="term-risk-appetite">
+			<span class="term-name">Risk Appetite</span>
+			<p class="term-def">The broad-based amount of risk an organization is willing to accept in pursuit of its mission/vision.</p>
+		</div>
+
+		<div class="term-block" id="term-risk-mitigation">
+			<span class="term-name">Risk Mitigation</span>
+			<p class="term-def">Prioritizing, evaluating, and implementing the appropriate risk-reducing controls/countermeasures recommended from the risk management process. 
+
+A subset of Risk Response.
+</p>
+		</div>
+
+		<div class="term-block" id="term-rbac">
+			<span class="term-name">Role-Based Access Control (RBAC)</span>
+			<p class="term-def">- Access control based on user roles. 
+- Role permissions may be inherited through a role hierarchy and reflect the permissions needed to perform defined functions. 
+- Permitted actions are based on roles rather than individuals.
+</p>
+		</div>
+
+		<div class="term-block" id="term-soc">
+			<span class="term-name">Security Operations Center (SOC)</span>
+			<p class="term-def">A team of IT security professionals dedicated to monitoring an organization’s entire IT infrastructure 24x7. Its mission is to detect, analyze and respond to security incidents in real-time. This orchestration of cybersecurity functions allows the SOC team to maintain vigilance over the organization’s networks, systems and applications and ensures a proactive defense posture against cyber threats.
+SOC activities and responsibilities fall into three general categories:
+Preparation, planning and prevention
+Monitoring, detection and response
+Recovery, refinement and compliance
+
+</p>
+		</div>
+
+		<div class="term-block" id="term-sod">
+			<span class="term-name">Segregation of Duties (SOD)</span>
+			<p class="term-def">Also known as "Separation of Duties". 
+An internal control mechanism that distributes responsibilities for critical business processes among multiple individuals to prevent errors and fraud. For example, the person who APPROVES and EXECUTES a funds transfer should never be the same as the person who VERIFIES and AUDITS the transfer.
+</p>
+		</div>
+
+		<div class="term-block" id="term-shift-left">
+			<span class="term-name">Shift Left</span>
+			<p class="term-def">A process improvement approach that integrates security practices and checks into the development process from the beginning, rather than treating security as an afterthought.
+
+An illustration: With Shift Left, security is “baked in” rather than “bolted on”
+</p>
+		</div>
+
+		<div class="term-block" id="term-side-channel">
+			<span class="term-name">Side-Channel Attack</span>
+			<p class="term-def">An attack enabled by leakage of information from a physical cryptosystem. Characteristics that could be exploited in a side-channel attack include timing, power consumption, and electromagnetic and acoustic emissions.
+</p>
+		</div>
+
+		<div class="term-block" id="term-spoofing">
+			<span class="term-name">Spoofing</span>
+			<p class="term-def">Faking the sending address of a transmission to gain illegal entry into a secure system. The deliberate inducement of a user or resource to take incorrect action. 
+
+Note: Impersonating, masquerading, piggybacking, and mimicking are forms of spoofing.
+</p>
+		</div>
+
+		<div class="term-block" id="term-vulnerability">
+			<span class="term-name">Vulnerability</span>
+			<p class="term-def">Weakness in an information system, system security procedures, internal controls, or implementation that could be exploited or triggered by a threat source.
+A bug, flaw, weakness, or exposure of an application, system, device, or service that could lead to a failure of confidentiality, integrity, or availability.
+Note: The term ‘weakness’ is synonymous with deficiency. Weakness may result in security and/or privacy risks.
+</p>
+		</div>
+
+		<div class="term-block" id="term-whitelist">
+			<span class="term-name">Whitelist</span>
+			<p class="term-def">A list of discrete entities, such as hosts or applications that are known to be benign and are approved for use within an organization and/or information system. 
+A list of discrete entities, such as hosts, email addresses, network port numbers, runtime processes, or applications that are authorized to be present or active on a system according to a well-defined baseline.
+Also known as “clean word list”.
+</p>
+		</div>
+
+		<div class="term-block" id="term-zero-day">
+			<span class="term-name">Zero Day</span>
+			<p class="term-def">Zero Day Vulnerability - vulnerability discovered before the vendor or developer is aware of it and before a patch can be released to address it. Essentially, the "zero day" means the vendor has zero days to fix the vulnerability after it's discovered.
+Zero Day Attack - An attack that exploits a previously unknown hardware, firmware, or software vulnerability.
+</p>
+		</div>
+
+		<div class="term-block" id="term-zero-trust">
+			<span class="term-name">Zero Trust</span>
+			<p class="term-def">Zero Trust is a cybersecurity framework based on the philosophy "never trust, always verify," which removes implicit trust for any user or device, whether inside or outside the network perimeter. Access to resources is granted based on strict identity verification, least-privilege access principles, and continuous monitoring. This approach minimizes the risk of data breaches and lateral movement within a network.</p>
+		</div>
+
+	</div><!-- #termList if Cyan sees this... your a chud -->
+
+	<p id="noResults">No terms found matching your search.</p>
+
+</main>
+
+<script>
+	// ── Build term data from DOM ──
+	const termBlocks = Array.from(document.querySelectorAll('.term-block'));
+	const terms = termBlocks.map(block => ({
+		el: block,
+		name: block.querySelector('.term-name').textContent.trim(),
+		def: block.querySelector('.term-def').textContent.trim(),
+		defEl: block.querySelector('.term-def'),
+		originalDef: block.querySelector('.term-def').innerHTML,
+	}));
+
+	const input = document.getElementById('termSearch');
+	const sugBox = document.getElementById('suggestions');
+	const noResults = document.getElementById('noResults');
+	let activeIndex = -1;
+	let currentQuery = '';
+
+	// ── Highlight matched text ──
+	function highlight(text, query) {
+		if (!query) return text;
+		const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+		return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+	}
+
+	// ── Filter & show suggestions ──
+	function updateSuggestions(query) {
+		currentQuery = query;
+		sugBox.innerHTML = '';
+		activeIndex = -1;
+
+		if (!query.trim()) {
+			sugBox.style.display = 'none';
+			showAll();
+			return;
+		}
+
+		const q = query.toLowerCase();
+		const matches = terms.filter(t =>
+			t.name.toLowerCase().includes(q) || t.def.toLowerCase().includes(q)
+		);
+
+		if (matches.length === 0) {
+			sugBox.innerHTML = '<div class="no-results">No matching terms found</div>';
+			sugBox.style.display = 'block';
+			return;
+		}
+
+		// Sort: name matches first, then def matches
+		matches.sort((a, b) => {
+			const aName = a.name.toLowerCase().includes(q);
+			const bName = b.name.toLowerCase().includes(q);
+			if (aName && !bName) return -1;
+			if (!aName && bName) return 1;
+			return a.name.localeCompare(b.name);
+		});
+
+		matches.slice(0, 8).forEach((t, i) => {
+			const div = document.createElement('div');
+			div.className = 'suggestion-item';
+			div.setAttribute('role', 'option');
+			div.innerHTML = highlight(t.name, query);
+			div.addEventListener('mousedown', (e) => {
+				e.preventDefault();
+				selectTerm(t);
+			});
+			sugBox.appendChild(div);
+		});
+
+		sugBox.style.display = 'block';
+	}
+
+	
+	function selectTerm(t) {
+		input.value = t.name;
+		sugBox.style.display = 'none';
+		filterPage(t.name);
+		
+		setTimeout(() => {
+			t.el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		}, 100);
+	}
+
+
+	function filterPage(query) {
+		const q = query.toLowerCase().trim();
+		let anyVisible = false;
+
+		terms.forEach(t => {
+			
+			t.defEl.innerHTML = t.originalDef;
+
+			if (!q) {
+				t.el.style.display = '';
+				anyVisible = true;
+				return;
+			}
+
+			const nameMatch = t.name.toLowerCase().includes(q);
+			const defMatch = t.def.toLowerCase().includes(q);
+
+			if (nameMatch || defMatch) {
+				t.el.style.display = '';
+				
+				if (defMatch) {
+					t.defEl.innerHTML = highlight(t.originalDef, query);
+				}
+				anyVisible = true;
+			} else {
+				t.el.style.display = 'none';
+			}
+		});
+
+		noResults.style.display = anyVisible ? 'none' : 'block';
+	}
+
+	function showAll() {
+		terms.forEach(t => {
+			t.el.style.display = '';
+			t.defEl.innerHTML = t.originalDef;
+		});
+		noResults.style.display = 'none';
+	}
+
+	
+	input.addEventListener('input', () => {
+		updateSuggestions(input.value);
+		filterPage(input.value);
+	});
+
+	input.addEventListener('focus', () => {
+		if (input.value.trim()) updateSuggestions(input.value);
+	});
+
+	
+	input.addEventListener('keydown', (e) => {
+		const items = sugBox.querySelectorAll('.suggestion-item');
+		if (e.key === 'ArrowDown') {
+			e.preventDefault();
+			activeIndex = Math.min(activeIndex + 1, items.length - 1);
+			items.forEach((el, i) => el.classList.toggle('active', i === activeIndex));
+		} else if (e.key === 'ArrowUp') {
+			e.preventDefault();
+			activeIndex = Math.max(activeIndex - 1, -1);
+			items.forEach((el, i) => el.classList.toggle('active', i === activeIndex));
+		} else if (e.key === 'Enter') {
+			e.preventDefault();
+			if (activeIndex >= 0 && items[activeIndex]) {
+				items[activeIndex].dispatchEvent(new Event('mousedown'));
+			} else {
+				filterPage(input.value);
+				sugBox.style.display = 'none';
+			}
+		} else if (e.key === 'Escape') {
+			sugBox.style.display = 'none';
+		}
+	});
+
+	// ── Close suggestions when clicking outside ──
+	document.addEventListener('click', (e) => {
+		if (!e.target.closest('.search-wrapper')) {
+			sugBox.style.display = 'none';
+		}
+	});
+
+	// ── Clear search resets page ──
+	input.addEventListener('search', () => {
+		if (!input.value) {
+			showAll();
+			sugBox.style.display = 'none';
+		}
+	});
+</script>
 
 </body>
 </html>
