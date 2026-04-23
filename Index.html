@@ -1,78 +1,69 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel = "icon" href = "Images/senseifaviocon.ico">
+    <title>CS-Sensei | CyberSecurity Mentorship</title>
+    <link rel="icon" href="Images/senseifaviocon.ico">
     <style>
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(180deg,#000000 0%, #011822 50%, #05ccd3 100%);
-            color: #e6eef6;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blue-light: #05ccd3;
+            --blue-mid: #1a7fff;
+            --blue-dark: #011822;
+            --black: #000;
+            --text: #e6eef6;
         }
-        .box {
-            background: #000000;
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Open Sans', sans-serif;
+            background: #000;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ── Topbar ── */
+        .topbar {
+            background: #000;
             color: #ececec;
-            padding: 12px 20px;
-            border-radius: 8px;
-            width: 100%;
-            height: 90px;
-            margin: 0 auto;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-            outline: 4px solid rgba(255,255,255,0.03);
-            box-sizing: border-box;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            padding: 12px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            height: 90px;
         }
-        .box-left { display:flex; align-items:center; gap:12px; }
-        .box-right { display:flex; align-items:center; gap:12px; }
+        .topbar-left { display: flex; align-items: center; gap: 12px; }
+        .topbar-left img { height: 60px; cursor: pointer; }
+        .topbar-left span { color: #fff; font-size: 15px; }
+        .topbar-right { display: flex; align-items: center; gap: 10px; }
 
-        .search-input {
-            padding: 6px 10px;
+        .nav-btn {
+            color: #ececec;
+            text-decoration: none;
+            padding: 6px 14px;
             border-radius: 6px;
             border: 1px solid rgba(255,255,255,0.12);
-            background: rgba(255,255,255,0.03);
-            color: #fff;
-            min-width: 180px;
-        }
-        .search-input::placeholder { color: rgba(255,255,255,0.6); }
-
-        .dropdown { position: relative; }
-        .dropbtn {
             background: transparent;
-            color: #ececec;
-            border: 1px solid rgba(255,255,255,0.06);
-            padding: 6px 10px;
-            border-radius: 6px;
             cursor: pointer;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            transition: background 0.2s, border-color 0.2s;
         }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: #111;
-            min-width: 140px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
-            border-radius: 6px;
-            overflow: hidden;
-            z-index: 10;
+        .nav-btn:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.25); }
+        .nav-btn.contact {
+            background: linear-gradient(135deg, rgba(5,204,211,0.15), rgba(26,127,255,0.15));
+            border-color: rgba(5,204,211,0.35);
+            color: #7ee8ff;
         }
-        .dropdown-content a {
-            color: #eee;
-            padding: 8px 12px;
-            text-decoration: none;
-            display: block;
-        }
-        .dropdown:hover .dropdown-content { display: block; }
-        .dropdown-content a:hover { background: rgba(255,255,255,0.03); }
+        .nav-btn.contact:hover { background: linear-gradient(135deg, rgba(5,204,211,0.28), rgba(26,127,255,0.28)); }
 
-        .video-background-container {
+        /* ── Video Hero ── */
+        .video-hero {
             position: relative;
             width: 100vw;
             height: 100vh;
@@ -90,196 +81,597 @@
             object-fit: cover;
             pointer-events: none;
             z-index: 0;
+            transition: opacity 0.1s;
         }
 
-        .content {
+        .video-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
+            background: rgba(0,0,0,0.38);
+            z-index: 1;
+        }
+
+        .hero-text {
+            position: absolute;
+            inset: 0;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: white;
             text-align: center;
-            background-color: rgba(0, 0, 0, 0.35);
+            z-index: 2;
             padding: 20px;
-            box-sizing: border-box;
+            transition: transform 0.05s, opacity 0.05s;
+        }
+        .hero-text h1 {
+            font-size: clamp(40px, 8vw, 75px);
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.6);
+        }
+        .hero-text p {
+            font-size: clamp(18px, 3vw, 32px);
+            color: rgba(255,255,255,0.88);
+            margin-top: 14px;
+            max-width: 720px;
+            text-shadow: 0 2px 16px rgba(0,0,0,0.5);
+        }
+
+        /* ── Scroll-reveal text that lifts up ── */
+        .scroll-reveal-section {
+            position: relative;
+            z-index: 10;
+            background: #000;
+            padding: 80px 40px 40px;
+            text-align: center;
+        }
+
+        .scroll-reveal-text {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+            color: rgba(255,255,255,0.6);
+            font-size: 18px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .scroll-reveal-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Pop-out Cards Section ── */
+        .cards-section {
+            background: #000;
+            padding: 20px 40px 80px;
+        }
+        .cards-section-title {
+            text-align: center;
+            font-size: 13px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(5,204,211,0.7);
+            margin-bottom: 40px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+
+        /* Each card wrapper handles the popout + expand */
+        .card-wrap {
+            position: relative;
+        }
+
+        .card {
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            cursor: pointer;
+            background: linear-gradient(145deg, #060c14, #071a2a);
+            border: 1px solid rgba(5,204,211,0.12);
+            transition: transform 0.32s cubic-bezier(.22,.68,0,.98),
+                        box-shadow 0.32s ease,
+                        border-color 0.32s ease;
+            will-change: transform;
+        }
+        .card:hover {
+            transform: translateY(-10px) scale(1.025);
+            box-shadow: 0 24px 60px rgba(5,204,211,0.18), 0 8px 20px rgba(0,0,0,0.7);
+            border-color: rgba(5,204,211,0.4);
+        }
+        .card-inner {
+            padding: 32px 28px;
+            background: linear-gradient(160deg,
+                rgba(0,6,18,0.0) 0%,
+                rgba(5,204,211,0.04) 100%);
+        }
+        .card-icon {
+            font-size: 30px;
+            margin-bottom: 14px;
+            display: block;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        .card-teaser {
+            font-size: 14px;
+            color: rgba(200,225,245,0.7);
+            line-height: 1.6;
+        }
+        .card-hint {
+            margin-top: 16px;
+            font-size: 12px;
+            color: rgba(5,204,211,0.55);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .card-hint::after {
+            content: '▼';
+            font-size: 10px;
+            transition: transform 0.3s;
+        }
+        .card.open .card-hint::after { transform: rotate(180deg); }
+
+        /* Shimmer accent on hover */
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg,
+                rgba(5,204,211,0.0) 0%,
+                rgba(26,127,255,0.07) 50%,
+                rgba(5,204,211,0.0) 100%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
             z-index: 1;
         }
+        .card:hover::before { opacity: 1; }
 
-        .page-section {
-            --bg-image: none;
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0;
-            box-sizing: border-box;
-            color: #e6eef6;
-            border-radius: 12px;
+        /* ── Expandable panel ── */
+        .card-expand {
+            max-height: 0;
             overflow: hidden;
-            background:
-                linear-gradient(180deg, rgba(0,12,40,0.25), rgba(0,6,30,0.15)),
-                var(--bg-image);
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+            transition: max-height 0.5s cubic-bezier(.4,0,.2,1);
+            background: linear-gradient(180deg, rgba(0,20,40,0.95), rgba(0,8,20,0.98));
+            border-top: 1px solid rgba(5,204,211,0.1);
         }
-        .page-section .section-box {
-            background: linear-gradient(180deg, rgba(2,18,60,0.72), rgba(2,18,60,0.55));
-            padding: 36px;
-            border-radius: 8px;
-            margin: 18px;
+        .card-expand.open { max-height: 500px; }
+
+        .card-expand-inner {
+            display: flex;
+            gap: 24px;
+            padding: 28px;
+            align-items: flex-start;
         }
-        .page-section h2 {
-            font-size: 30px;
-            margin: 0 0 12px 0;
+        .card-expand-img {
+            width: 140px;
+            min-width: 140px;
+            height: 120px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #011822, #0a2a40);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            flex-shrink: 0;
+            border: 1px solid rgba(5,204,211,0.15);
+        }
+        .card-expand-text h3 {
+            font-size: 17px;
             color: #fff;
-            letter-spacing: 0.4px;
+            margin-bottom: 10px;
         }
-        .page-section p {
+        .card-expand-text p {
+            font-size: 14px;
+            color: rgba(200,225,245,0.82);
+            line-height: 1.75;
+        }
+
+        /* ── Webinars section ── */
+        .webinars-section {
+            background: linear-gradient(180deg, #000 0%, #020d18 100%);
+            padding: 60px 40px 80px;
+        }
+        .webinars-section h2 {
+            text-align: center;
+            font-size: 28px;
+            color: #fff;
+            margin-bottom: 36px;
+            letter-spacing: -0.3px;
+        }
+        .webinar-grid {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            gap: 16px;
+        }
+        .webinar-card {
+            background: linear-gradient(135deg, rgba(5,204,211,0.05), rgba(26,127,255,0.04));
+            border: 1px solid rgba(5,204,211,0.1);
+            border-radius: 12px;
+            padding: 20px 24px;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .webinar-card:hover {
+            border-color: rgba(5,204,211,0.3);
+            background: linear-gradient(135deg, rgba(5,204,211,0.09), rgba(26,127,255,0.07));
+        }
+        .webinar-card h3 { font-size: 17px; color: #fff; margin-bottom: 6px; }
+        .webinar-card p { font-size: 14px; color: rgba(200,225,245,0.72); line-height: 1.6; }
+
+        /* ── Footer ── */
+        footer {
+            background: #000;
+            border-top: 1px solid rgba(5,204,211,0.12);
+            padding: 60px 40px 30px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        footer.visible { opacity: 1; transform: translateY(0); }
+
+        .footer-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .footer-brand img { height: 46px; margin-bottom: 14px; display: block; }
+        .footer-brand p { font-size: 13px; color: rgba(200,225,245,0.55); line-height: 1.7; }
+        .footer-brand .contact-info { margin-top: 18px; }
+        .footer-brand .contact-info p { color: rgba(200,225,245,0.5); font-size: 13px; margin-bottom: 4px; }
+        .footer-brand .contact-info a { color: rgba(5,204,211,0.8); text-decoration: none; }
+        .footer-brand .contact-info a:hover { color: #05ccd3; }
+
+        .footer-col h4 {
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(5,204,211,0.7);
+            margin-bottom: 16px;
+        }
+        .footer-col a {
+            display: block;
+            color: rgba(200,225,245,0.6);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 10px;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover { color: #fff; }
+
+        .footer-social { margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .social-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
             font-size: 16px;
-            line-height: 1.7;
-            color: #dbeaf6;
-            margin: 0;
+            color: rgba(200,225,245,0.7);
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+            background: rgba(255,255,255,0.02);
         }
-        .section--accent { background-blend-mode: overlay; background-color: rgba(30,144,255,0.06); }
-        .section--ir     { background-blend-mode: overlay; background-color: rgba(255,122,89,0.06); }
-        .section--ethics { background-blend-mode: overlay; background-color: rgba(240,196,25,0.05); }
-        .section--ciso   { background-blend-mode: overlay; background-color: rgba(124,58,237,0.05); }
-        .section--webinars{ background-blend-mode: overlay; background-color: rgba(59,178,115,0.05); }
-        .webinar-list { margin-top: 18px; display:block; }
-        .webinar-item { padding: 14px 16px; background: rgba(255,255,255,0.02); margin-bottom:12px; border-radius:10px; color:#eaf5ff; }
-        .webinar-item h3 { margin:0 0 6px 0; font-size:18px; color:#fff; }
-        .webinar-item p { margin:0; font-size:14px; color:#d7e9ff; }
-
-        @media (max-width:600px) {
-            .box { height: auto; padding: 12px; }
-        }
-        @media (max-width:720px){
-            .page-section { padding: 20px 12px; }
-            .page-section h2 { font-size:22px; }
+        .social-icon:hover {
+            background: rgba(5,204,211,0.1);
+            border-color: rgba(5,204,211,0.4);
+            color: #fff;
         }
 
-           /* uhm uhmm uh uhhhh uhduhfudhfddfuhhhh text colores */
-        p
-        	{
-            	color: #ffffff;
-            }
-        h1
-        	{
-            	color: #ffffff;
-            }
-        h2
-        	{
-            	color: #ffffff;
-            }
-        h3
-        	{
-            	color: #ffffff;
-            }
+        .footer-bottom {
+            max-width: 1100px;
+            margin: 24px auto 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .footer-bottom p { font-size: 12px; color: rgba(200,225,245,0.35); }
+        .footer-bottom-links { display: flex; gap: 20px; }
+        .footer-bottom-links a {
+            font-size: 12px;
+            color: rgba(200,225,245,0.35);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-bottom-links a:hover { color: rgba(5,204,211,0.8); }
+
+        @media (max-width: 860px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+        }
+        @media (max-width: 560px) {
+            .footer-grid { grid-template-columns: 1fr; }
+            .cards-section, .webinars-section { padding-left: 18px; padding-right: 18px; }
+            .topbar-left span { display: none; }
+            .card-expand-inner { flex-direction: column; }
+            .card-expand-img { width: 100%; min-width: unset; }
+        }
     </style>
 </head>
 <body>
-    <div class="box">
-        <div class="box-left">
-            <img id="logo" src="Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg" alt="CS-Sensei logo" height="60">
-            <p style="color: #ffffff;">CS-Sensei CyberSecurity Mentorship Program</p>
+
+    <!-- ── Topbar ── -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <a href="Index.html"><img src="Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg" alt="CS-Sensei logo"></a>
+            <span>CS&#8209;Sensei CyberSecurity Mentorship Program</span>
         </div>
-
-        <div class="box-right" aria-hidden="false">
-            <form id="siteSearchForm" role="search" onsubmit="return false;">
-                <input id="siteSearchInput" class="search-input" type="search" placeholder="Search site..." aria-label="Search site">
-            </form>
-
-            <a class="dropbtn" href="./Cybersecurity Terms/index.html" style="text-decoration:none; display:inline-block; padding:6px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.06); color:rgb(255, 255, 255); background:transparent;">TERMS</a >
-
-            <div class="dropdown" aria-haspopup="true">
-                <button class="dropbtn" type="button">Profile ▾</button>
-                <div class="dropdown-content" role="menu">
-                    <a href="#">Sign in</a>
-                    <a href="#">Settings</a>
-                </div>
-            </div>
+        <div class="topbar-right">
+            <a class="nav-btn" href="Cybersecurity Terms/index.html">TERMS</a>
+            <a class="nav-btn contact" href="contact.html">Contact</a>
         </div>
-    </div>
+    </header>
 
-    <div class="video-background-container">
+    <!-- ── Video Hero ── -->
+    <div class="video-hero" id="videoHero">
         <video autoplay muted loop playsinline id="myVideo" aria-hidden="true">
             <source src="Background.mp4" type="video/mp4">
         </video>
-
-        <div class="content">
-            <h1 style="font-size: 75px";>CyberSecurity</h1>
-            <p style="font-size: 35px";>Learn practical skills, get mentorship and grow your security career.</p>
+        <div class="video-overlay"></div>
+        <div class="hero-text" id="heroText">
+            <h1>CyberSecurity</h1>
+            <p>Learn practical skills, get mentorship and grow your security career.</p>
         </div>
     </div>
 
-    <main>
-        <section class="page-section section--accent" id="what-different">
-            <div class="section-box">
-                <h2>What makes us different?</h2>
-                <p>Our mentors are independent, objective, and ethics‑focused. We demonstrate by example why it's critically important to build TRUST, not just be proficient with TOOLS.</p>
-            </div>
-        </section>
+    <!-- ── Scroll reveal bridge text ── -->
+    <div class="scroll-reveal-section">
+        <p class="scroll-reveal-text" id="revealText">What makes us different?</p>
+    </div>
 
-        <section class="page-section section--ir" id="incident-response">
-            <div class="section-box">
-                <h2>Real Incident Response Experience</h2>
-                <p>Our mentorship team is unique in the industry, offering mentees REAL EXPERIENCE through our Incident Response Team. Email us for info and opportunities to participate in real case work.</p>
-            </div>
-        </section>
+    <!-- ── Pop-out Cards ── -->
+    <section class="cards-section">
+        <p class="cards-section-title">Our Approach</p>
+        <div class="cards-grid">
 
-        <section class="page-section section--ethics" id="code-of-ethics">
-            <div class="section-box">
-                <h2>Code of Ethics</h2>
-                <p>Mentors and mentees alike agree to abide by our Code of Ethics. Ethical decision-making is integrated into every lesson, exercise, and assessment.</p>
-            </div>
-        </section>
-
-        <section class="page-section section--ciso" id="think-like-ciso">
-            <div class="section-box">
-                <h2>Think & Speak Like Your CISO</h2>
-                <p>Learn to think and speak like your CISO. We cover activities from the perspective of a service provider and focus on "Business Risk", "Bottom Line", and "Lessons Learned".</p>
-            </div>
-        </section>
-
-        <section class="page-section section--webinars" id="recent-webinars">
-            <div class="section-box">
-                <h2>Recent Webinars</h2>
-                <div class="webinar-list">
-                 <article class="webinar-item">
-                     <h3>CyberSecurity as a Career in 2023</h3>
-                     <p>Overview of career paths, certifications, and market demand — recorded webinar.</p>
-                 </article>
-
-                 <article class="webinar-item">
-                     <h3>How To Get Experience BEFORE You Get The Job!</h3>
-                     <p>Practical steps and programs to build demonstrable experience and a portfolio that hiring managers notice.</p>
-                 </article>
-
-                 <article class="webinar-item">
-                     <h3>Many Skills are Needed for CyberSecurity Jobs!</h3>
-                     <p>From communication to toolchains, the webinar explores the variety of skills hiring teams expect.</p>
-                 </article>
-
-                 <article class="webinar-item">
-                     <h3>ALWAYS ask "SHOULD I?!?" - The Ethics of CyberSecurity</h3>
-                     <p>A deep dive into ethical decision-making with real-world case studies used in our mentorship practice.</p>
-                 </article>
+            <!-- Card 1 -->
+            <div class="card-wrap">
+                <div class="card" id="card-0" onclick="toggleCard(0)">
+                    <div class="card-inner">
+                        <span class="card-icon">🛡️</span>
+                        <div class="card-title">What Makes Us Different?</div>
+                        <p class="card-teaser">Ethics-first mentorship from independent, objective professionals who build TRUST alongside TOOLS.</p>
+                        <div class="card-hint">Learn more</div>
+                    </div>
+                    <div class="card-expand" id="expand-0">
+                        <div class="card-expand-inner">
+                            <div class="card-expand-img">🛡️</div>
+                            <div class="card-expand-text">
+                                <h3>Trust Over Tools</h3>
+                                <p>Our mentors are independent, objective, and ethics‑focused. We demonstrate by example why it's critically important to build TRUST, not just be proficient with TOOLS. Real cybersecurity professionals understand that technical skill without ethical grounding creates risk — not security.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </section>
-    </main>
 
-   
+            <!-- Card 2 -->
+            <div class="card-wrap">
+                <div class="card" id="card-1" onclick="toggleCard(1)">
+                    <div class="card-inner">
+                        <span class="card-icon">🚨</span>
+                        <div class="card-title">Real Incident Response Experience</div>
+                        <p class="card-teaser">Gain hands-on experience through our active Incident Response Team — not simulations.</p>
+                        <div class="card-hint">Learn more</div>
+                    </div>
+                    <div class="card-expand" id="expand-1">
+                        <div class="card-expand-inner">
+                            <div class="card-expand-img">🚨</div>
+                            <div class="card-expand-text">
+                                <h3>Live Case Work</h3>
+                                <p>Our mentorship team is unique in the industry, offering mentees REAL EXPERIENCE through our Incident Response Team. Email us for info and opportunities to participate in real case work. There's no better learning environment than responding to live incidents alongside seasoned professionals.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="card-wrap">
+                <div class="card" id="card-2" onclick="toggleCard(2)">
+                    <div class="card-inner">
+                        <span class="card-icon">⚖️</span>
+                        <div class="card-title">Code of Ethics</div>
+                        <p class="card-teaser">Every lesson, exercise, and assessment integrates ethical decision-making from day one.</p>
+                        <div class="card-hint">Learn more</div>
+                    </div>
+                    <div class="card-expand" id="expand-2">
+                        <div class="card-expand-inner">
+                            <div class="card-expand-img">⚖️</div>
+                            <div class="card-expand-text">
+                                <h3>Ethics in Everything</h3>
+                                <p>Mentors and mentees alike agree to abide by our Code of Ethics. Ethical decision-making is integrated into every lesson, exercise, and assessment. We believe that the most skilled cybersecurity professionals are also its most ethical — and we train accordingly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="card-wrap">
+                <div class="card" id="card-3" onclick="toggleCard(3)">
+                    <div class="card-inner">
+                        <span class="card-icon">💼</span>
+                        <div class="card-title">Think & Speak Like Your CISO</div>
+                        <p class="card-teaser">Understand Business Risk, Bottom Line, and Lessons Learned — from a service provider's lens.</p>
+                        <div class="card-hint">Learn more</div>
+                    </div>
+                    <div class="card-expand" id="expand-3">
+                        <div class="card-expand-inner">
+                            <div class="card-expand-img">💼</div>
+                            <div class="card-expand-text">
+                                <h3>Executive-Level Thinking</h3>
+                                <p>Learn to think and speak like your CISO. We cover activities from the perspective of a service provider and focus on "Business Risk", "Bottom Line", and "Lessons Learned". Understanding how security decisions affect the business is what separates good practitioners from great ones.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ── Webinars ── -->
+    <section class="webinars-section">
+        <h2>Recent Webinars</h2>
+        <div class="webinar-grid">
+            <article class="webinar-card">
+                <h3>CyberSecurity as a Career in 2023</h3>
+                <p>Overview of career paths, certifications, and market demand — recorded webinar.</p>
+            </article>
+            <article class="webinar-card">
+                <h3>How To Get Experience BEFORE You Get The Job!</h3>
+                <p>Practical steps and programs to build demonstrable experience and a portfolio that hiring managers notice.</p>
+            </article>
+            <article class="webinar-card">
+                <h3>Many Skills are Needed for CyberSecurity Jobs!</h3>
+                <p>From communication to toolchains, the webinar explores the variety of skills hiring teams expect.</p>
+            </article>
+            <article class="webinar-card">
+                <h3>ALWAYS ask "SHOULD I?!?" — The Ethics of CyberSecurity</h3>
+                <p>A deep dive into ethical decision-making with real-world case studies used in our mentorship practice.</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- ── Footer ── -->
+    <footer id="siteFooter">
+        <div class="footer-grid">
+
+            <!-- Brand + Contact Info -->
+            <div class="footer-brand">
+                <img src="Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg" alt="CS-Sensei logo">
+                <p>CS-Sensei is a cybersecurity mentorship program built by practitioners, for practitioners. We bridge the gap between academic knowledge and real-world security operations.</p>
+                <div class="contact-info">
+                    <p>📍 United States</p>
+                    <p>📧 <a href="mailto:info@cs-sensei.com">info@cs-sensei.com</a></p>
+                    <p>📞 <a href="tel:+15550000000">(555) 000-0000</a></p>
+                </div>
+                <!-- Social Icons -->
+                <div class="footer-social">
+                    <a class="social-icon" href="#" aria-label="LinkedIn" title="LinkedIn">in</a>
+                    <a class="social-icon" href="#" aria-label="Twitter/X" title="Twitter / X">𝕏</a>
+                    <a class="social-icon" href="#" aria-label="YouTube" title="YouTube">▶</a>
+                    <a class="social-icon" href="#" aria-label="GitHub" title="GitHub">
+                        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="footer-col">
+                <h4>Navigate</h4>
+                <a href="Index.html">Home</a>
+                <a href="Cybersecurity Terms/index.html">Terms & Glossary</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+            <!-- Services -->
+            <div class="footer-col">
+                <h4>Services</h4>
+                <a href="#">Mentorship Program</a>
+                <a href="#">Incident Response</a>
+                <a href="#">Webinars</a>
+                <a href="#">Ethics Training</a>
+            </div>
+
+            <!-- Legal -->
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Disclaimer</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2025 CS-Sensei CyberSecurity Mentorship Program. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Sitemap</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /* ── Scroll: video fades, hero text lifts, reveal text appears ── */
+        const video = document.getElementById('myVideo');
+        const heroText = document.getElementById('heroText');
+        const videoHero = document.getElementById('videoHero');
+        const revealText = document.getElementById('revealText');
+        const footer = document.getElementById('siteFooter');
+
+        function onScroll() {
+            const scrollY = window.scrollY;
+            const heroH = videoHero.offsetHeight;
+
+            // Progress 0→1 over first heroHeight pixels of scroll
+            const prog = Math.min(scrollY / heroH, 1);
+
+            // Video fades out
+            video.style.opacity = 1 - prog;
+
+            // Hero text lifts up and fades
+            heroText.style.transform = `translateY(${-prog * 80}px)`;
+            heroText.style.opacity = 1 - prog * 1.4;
+
+            // Scroll-reveal text
+            if (scrollY > heroH * 0.3) {
+                revealText.classList.add('visible');
+            } else {
+                revealText.classList.remove('visible');
+            }
+
+            // Footer pop-in
+            const docH = document.documentElement.scrollHeight;
+            const winH = window.innerHeight;
+            if (scrollY + winH > docH - 120) {
+                footer.classList.add('visible');
+            }
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+
+        /* ── Card expand toggle ── */
+        function toggleCard(index) {
+            const card = document.getElementById('card-' + index);
+            const expand = document.getElementById('expand-' + index);
+            const isOpen = expand.classList.contains('open');
+
+            // Close all
+            document.querySelectorAll('.card-expand').forEach(e => e.classList.remove('open'));
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
+
+            // Open clicked if it wasn't open
+            if (!isOpen) {
+                expand.classList.add('open');
+                card.classList.add('open');
+            }
+        }
+    </script>
+
 </body>
-
 </html>
-
-
-
-
-
