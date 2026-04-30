@@ -8,409 +8,384 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        :root {
-            --blue-light: #05ccd3;
-            --blue-mid: #1a7fff;
-            --blue-dark: #011822;
-            --black: #000;
-            --text: #e6eef6;
-        }
-
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Open Sans', sans-serif;
             background: #000;
-            color: var(--text);
+            color: #e6eef6;
             overflow-x: hidden;
         }
 
-        /* ── Topbar ── */
+        /* ── Constellation canvas ── */
+        #starCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .topbar, .video-hero, .scroll-reveal-section,
+        .cards-section, .terms-promo-wrap,
+        .webinars-section, footer, .modal-backdrop {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ── TOPBAR ── */
         .topbar {
-            background: #000;
-            color: #ececec;
+            background: rgba(0,0,0,0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 12px 18px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            position: sticky;
-            top: 0;
-            z-index: 200;
+            border-bottom: 1px solid rgba(5,204,211,0.12);
+            position: fixed !important;
+            top: 0; left: 0; right: 0;
+            z-index: 1000 !important;
             height: 90px;
         }
         .topbar-left { display: flex; align-items: center; gap: 12px; }
         .topbar-left img { height: 60px; cursor: pointer; }
         .topbar-left span { color: #fff; font-size: 15px; }
         .topbar-right { display: flex; align-items: center; gap: 10px; }
-
         .nav-btn {
-            color: #ececec;
-            text-decoration: none;
-            padding: 6px 14px;
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.12);
-            background: transparent;
-            cursor: pointer;
-            font-size: 14px;
-            letter-spacing: 0.5px;
-            transition: background 0.2s, border-color 0.2s;
+            color: #ececec; text-decoration: none; padding: 6px 14px;
+            border-radius: 6px; border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(0,0,0,0.3); cursor: pointer; font-size: 14px;
+            letter-spacing: 0.5px; transition: background 0.2s, border-color 0.2s;
         }
-        .nav-btn:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.25); }
+        .nav-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.28); }
         .nav-btn.contact {
             background: linear-gradient(135deg, rgba(5,204,211,0.15), rgba(26,127,255,0.15));
-            border-color: rgba(5,204,211,0.35);
-            color: #7ee8ff;
+            border-color: rgba(5,204,211,0.38); color: #7ee8ff;
         }
         .nav-btn.contact:hover { background: linear-gradient(135deg, rgba(5,204,211,0.28), rgba(26,127,255,0.28)); }
 
-        /* ── Video Hero ── */
+        /* ── VIDEO HERO ── */
         .video-hero {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
+            position: relative; width: 100vw;
+            height: calc(100vh - 90px); margin-top: 90px; overflow: hidden;
         }
-
         #myVideo {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: auto;
-            height: 100%;
-            min-width: 100%;
+            position: absolute; top: 50%; left: 50%;
+            width: auto; height: 100%; min-width: 100%;
             transform: translate(-50%, -50%);
-            object-fit: cover;
-            pointer-events: none;
-            z-index: 0;
-            transition: opacity 0.1s;
+            object-fit: cover; pointer-events: none; z-index: 0; will-change: opacity;
         }
-
-        .video-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.38);
-            z-index: 1;
-        }
-
+        .video-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.42); z-index: 1; }
         .hero-text {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            z-index: 2;
-            padding: 20px;
-            transition: transform 0.05s, opacity 0.05s;
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; z-index: 2; padding: 20px;
+            will-change: transform, opacity;
         }
         .hero-text h1 {
-            font-size: clamp(40px, 8vw, 75px);
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: -1px;
-            text-shadow: 0 4px 30px rgba(0,0,0,0.6);
+            font-size: clamp(40px, 8vw, 75px); font-weight: 700; color: #fff;
+            letter-spacing: -1px; text-shadow: 0 4px 30px rgba(0,0,0,0.7);
         }
         .hero-text p {
-            font-size: clamp(18px, 3vw, 32px);
-            color: rgba(255,255,255,0.88);
-            margin-top: 14px;
-            max-width: 720px;
-            text-shadow: 0 2px 16px rgba(0,0,0,0.5);
+            font-size: clamp(18px, 3vw, 30px); color: rgba(255,255,255,0.88);
+            margin-top: 14px; max-width: 720px; text-shadow: 0 2px 16px rgba(0,0,0,0.6);
         }
 
-        /* ── Scroll-reveal text that lifts up ── */
-        .scroll-reveal-section {
-            position: relative;
-            z-index: 10;
-            background: #000;
-            padding: 80px 40px 40px;
-            text-align: center;
-        }
-
+        /* ── SCROLL REVEAL ── */
+        .scroll-reveal-section { background: rgba(0,0,0,0.7); padding: 80px 40px 40px; text-align: center; }
         .scroll-reveal-text {
-            opacity: 0;
-            transform: translateY(60px);
+            opacity: 0; transform: translateY(60px);
             transition: opacity 0.7s ease, transform 0.7s ease;
-            color: rgba(255,255,255,0.6);
-            font-size: 18px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            color: rgba(255,255,255,0.52); font-size: 18px; letter-spacing: 3px; text-transform: uppercase;
         }
-        .scroll-reveal-text.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .scroll-reveal-text.visible { opacity: 1; transform: translateY(0); }
 
-        /* ── Pop-out Cards Section ── */
-        .cards-section {
-            background: #000;
-            padding: 20px 40px 80px;
-        }
+        /* ── CARDS ── */
+        .cards-section { background: rgba(0,0,0,0.72); padding: 20px 40px 80px; }
         .cards-section-title {
-            text-align: center;
-            font-size: 13px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: rgba(5,204,211,0.7);
-            margin-bottom: 40px;
+            text-align: center; font-size: 12px; letter-spacing: 3px;
+            text-transform: uppercase; color: rgba(5,204,211,0.62); margin-bottom: 40px;
         }
-
         .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 24px;
-            max-width: 1140px;
-            margin: 0 auto;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px; max-width: 1140px; margin: 0 auto;
         }
-
-        /* Each card wrapper handles the popout + expand */
-        .card-wrap {
-            position: relative;
-        }
-
         .card {
-            position: relative;
-            border-radius: 14px;
-            overflow: hidden;
-            cursor: pointer;
-            background: linear-gradient(145deg, #060c14, #071a2a);
-            border: 1px solid rgba(5,204,211,0.12);
-            transition: transform 0.32s cubic-bezier(.22,.68,0,.98),
-                        box-shadow 0.32s ease,
-                        border-color 0.32s ease;
-            will-change: transform;
+            position: relative; border-radius: 14px; overflow: hidden; cursor: pointer;
+            background: linear-gradient(145deg, rgba(6,12,20,0.88), rgba(7,26,42,0.88));
+            border: 1px solid rgba(5,204,211,0.13); backdrop-filter: blur(6px);
+            transition: transform 0.32s cubic-bezier(.22,.68,0,.98), box-shadow 0.32s ease, border-color 0.32s ease;
         }
         .card:hover {
             transform: translateY(-10px) scale(1.025);
-            box-shadow: 0 24px 60px rgba(5,204,211,0.18), 0 8px 20px rgba(0,0,0,0.7);
-            border-color: rgba(5,204,211,0.4);
+            box-shadow: 0 24px 60px rgba(5,204,211,0.17), 0 8px 20px rgba(0,0,0,0.7);
+            border-color: rgba(5,204,211,0.42);
         }
-        .card-inner {
-            padding: 32px 28px;
-            background: linear-gradient(160deg,
-                rgba(0,6,18,0.0) 0%,
-                rgba(5,204,211,0.04) 100%);
-        }
-        .card-icon {
-            font-size: 30px;
-            margin-bottom: 14px;
-            display: block;
-        }
-        .card-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-        .card-teaser {
-            font-size: 14px;
-            color: rgba(200,225,245,0.7);
-            line-height: 1.6;
-        }
-        .card-hint {
-            margin-top: 16px;
-            font-size: 12px;
-            color: rgba(5,204,211,0.55);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .card-hint::after {
-            content: '▼';
-            font-size: 10px;
-            transition: transform 0.3s;
-        }
-        .card.open .card-hint::after { transform: rotate(180deg); }
-
-        /* Shimmer accent on hover */
         .card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg,
-                rgba(5,204,211,0.0) 0%,
-                rgba(26,127,255,0.07) 50%,
-                rgba(5,204,211,0.0) 100%);
-            opacity: 0;
-            transition: opacity 0.4s;
-            pointer-events: none;
-            z-index: 1;
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(5,204,211,0) 0%, rgba(26,127,255,0.07) 50%, rgba(5,204,211,0) 100%);
+            opacity: 0; transition: opacity 0.4s; pointer-events: none; z-index: 1;
         }
         .card:hover::before { opacity: 1; }
+        .card-inner { padding: 32px 28px; position: relative; z-index: 2; }
+        .card-icon { font-size: 30px; margin-bottom: 14px; display: block; }
+        .card-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+        .card-teaser { font-size: 14px; color: rgba(200,225,245,0.7); line-height: 1.6; }
+        .card-hint { margin-top: 16px; font-size: 12px; color: rgba(5,204,211,0.62); letter-spacing: 1px; text-transform: uppercase; }
 
-        /* ── Expandable panel ── */
-        .card-expand {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s cubic-bezier(.4,0,.2,1);
-            background: linear-gradient(180deg, rgba(0,20,40,0.95), rgba(0,8,20,0.98));
-            border-top: 1px solid rgba(5,204,211,0.1);
+        /* ── FULLSCREEN MODAL ── */
+        .modal-backdrop {
+            position: fixed; inset: 0; background: rgba(0,0,0,0);
+            z-index: 2000; opacity: 0; pointer-events: none;
+            transition: background 0.35s ease, opacity 0.35s ease;
         }
-        .card-expand.open { max-height: 500px; }
+        .modal-backdrop.open { background: rgba(0,0,0,0.88); opacity: 1; pointer-events: all; }
 
-        .card-expand-inner {
-            display: flex;
-            gap: 24px;
-            padding: 28px;
-            align-items: flex-start;
+        .modal-panel {
+            position: fixed; inset: 0;
+            background: linear-gradient(160deg, #020810 0%, #021428 50%, #040d22 100%);
+            overflow-y: auto; display: flex; flex-direction: column;
+            transform: scale(0.96) translateY(24px); opacity: 0;
+            transition: transform 0.38s cubic-bezier(.22,.68,0,.98), opacity 0.38s ease;
         }
-        .card-expand-img {
-            width: 70px;
-            min-width: 70px;
-            height: 70px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #011822, #0a2a40);
+        .modal-backdrop.open .modal-panel { transform: scale(1) translateY(0); opacity: 1; }
+
+        .modal-panel::before {
+            content: ''; display: block; height: 3px; flex-shrink: 0;
+            background: linear-gradient(90deg, #05ccd3, #1a7fff, #05ccd3);
+        }
+
+        .modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 28px 40px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
+        }
+        .modal-header-left { display: flex; align-items: center; gap: 18px; }
+        .modal-header-icon { display: none; }
+        .modal-header h2 { font-size: clamp(22px, 4vw, 34px); color: #fff; font-weight: 700; letter-spacing: -0.5px; }
+
+        .modal-close {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.14);
+            color: #fff; width: 46px; height: 46px; border-radius: 50%; font-size: 20px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            transition: background 0.2s, border-color 0.2s, transform 0.25s;
+        }
+        .modal-close:hover { background: rgba(5,204,211,0.14); border-color: rgba(5,204,211,0.5); transform: rotate(90deg); }
+
+        /* ── Modal body: centered column ── */
+        .modal-body {
+            flex: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            flex-shrink: 0;
-            border: 1px solid rgba(5,204,211,0.15);
-        }
-        .card-expand-text h3 {
-            font-size: 17px;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-        .card-expand-text p {
-            font-size: 14px;
-            color: rgba(200,225,245,0.82);
-            line-height: 1.75;
+            padding: 50px 40px 60px;
+            max-width: 860px;
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
         }
 
-        /* ── Webinars section ── */
-        .webinars-section {
-            background: linear-gradient(180deg, #000 0%, #020d18 100%);
-            padding: 60px 40px 80px;
+        /* Icon circle sits centered at the top */
+        .modal-icon-ring {
+            width: 110px; height: 110px;
+            border-radius: 50%;
+            border: 2px solid rgba(5,204,211,0.35);
+            background: linear-gradient(145deg, rgba(5,204,211,0.08), rgba(26,127,255,0.08));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 52px;
+            box-shadow: 0 0 40px rgba(5,204,211,0.12);
+            margin-bottom: 28px;
+            flex-shrink: 0;
         }
-        .webinars-section h2 {
-            text-align: center;
-            font-size: 28px;
-            color: #fff;
-            margin-bottom: 36px;
-            letter-spacing: -0.3px;
+
+        /* OR: image fills the ring area when provided */
+        .modal-icon-ring img {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
         }
-        .webinar-grid {
-            max-width: 900px;
-            margin: 0 auto;
-            display: grid;
-            gap: 16px;
+
+        .modal-subtitle {
+            font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+            color: rgba(5,204,211,0.8); margin-bottom: 20px;
         }
+
+        /* Divider line under subtitle */
+        .modal-divider {
+            width: 60px; height: 1px;
+            background: linear-gradient(90deg, transparent, #05ccd3, transparent);
+            margin: 0 auto 28px;
+        }
+
+        .modal-text-col {
+            width: 100%;
+            text-align: left;
+        }
+        .modal-text-col p { font-size: 15px; color: rgba(200,225,245,0.82); line-height: 1.85; margin-bottom: 14px; }
+        .modal-text-col ul { padding-left: 20px; margin-bottom: 14px; }
+        .modal-text-col ul li { font-size: 15px; color: rgba(200,225,245,0.78); line-height: 1.85; margin-bottom: 6px; }
+
+        /* Extra image placeholder below text */
+        .modal-extra-img {
+            width: 100%; margin-top: 32px;
+            border-radius: 10px; overflow: hidden;
+            border: 1px solid rgba(5,204,211,0.15);
+            background: linear-gradient(135deg, rgba(5,204,211,0.04), rgba(26,127,255,0.04));
+            min-height: 200px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-extra-img img { width: 100%; height: auto; display: block; }
+        .modal-extra-img .extra-placeholder {
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            padding: 36px; text-align: center;
+        }
+        .modal-extra-img .extra-placeholder span { font-size: 36px; opacity: 0.35; }
+        .modal-extra-img .extra-placeholder p {
+            font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+            color: rgba(5,204,211,0.32); margin: 0;
+        }
+
+        /* ── TERMS PROMO ── */
+        .terms-promo-wrap { padding: 0 40px 80px; background: rgba(0,0,0,0.72); perspective: 1200px; }
+        .terms-promo {
+            max-width: 1140px; margin: 0 auto;
+            background: linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(2,16,32,0.94) 55%, rgba(3,24,48,0.95) 100%);
+            border: 1px solid rgba(5,204,211,0.25); border-radius: 0;
+            overflow: hidden; display: flex; align-items: stretch; min-height: 280px;
+            opacity: 0;
+            transform: rotateX(20deg) translateY(70px) scale(0.95);
+            transform-origin: center bottom;
+            transition: opacity 0.75s ease, transform 0.75s cubic-bezier(.22,.68,0,.98);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.9), inset 0 1px 0 rgba(5,204,211,0.1);
+        }
+        .terms-promo.revealed { opacity: 1; transform: rotateX(0deg) translateY(0) scale(1); }
+        .terms-promo-img {
+            width: 360px; min-width: 260px; flex-shrink: 0;
+            background:
+                linear-gradient(135deg, rgba(5,204,211,0.05) 0%, rgba(26,127,255,0.04) 100%),
+                repeating-linear-gradient(45deg, rgba(5,204,211,0.02) 0px, rgba(5,204,211,0.02) 1px, transparent 1px, transparent 22px);
+            display: flex; align-items: center; justify-content: center;
+            position: relative; border-right: 1px solid rgba(5,204,211,0.14);
+        }
+        .terms-promo-img::before {
+            content: ''; position: absolute; top: 14px; left: 14px; width: 20px; height: 20px;
+            border-top: 2px solid rgba(5,204,211,0.55); border-left: 2px solid rgba(5,204,211,0.55);
+        }
+        .terms-promo-img::after {
+            content: ''; position: absolute; bottom: 14px; right: 14px; width: 20px; height: 20px;
+            border-bottom: 2px solid rgba(5,204,211,0.55); border-right: 2px solid rgba(5,204,211,0.55);
+        }
+        .terms-img-placeholder { text-align: center; pointer-events: none; }
+        .terms-img-placeholder span { font-size: 58px; display: block; margin-bottom: 10px; }
+        .terms-img-placeholder p { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(5,204,211,0.35); }
+        .terms-promo-content {
+            flex: 1; padding: 50px 48px;
+            display: flex; flex-direction: column; justify-content: center; position: relative;
+        }
+        .terms-promo-content::before {
+            content: ''; position: absolute; left: 0; top: 40px; bottom: 40px; width: 2px;
+            background: linear-gradient(180deg, transparent, #05ccd3 40%, #05ccd3 60%, transparent);
+        }
+        .terms-eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(5,204,211,0.68); margin-bottom: 14px; }
+        .terms-promo-content h2 { font-size: clamp(24px, 3.5vw, 38px); font-weight: 700; color: #fff; letter-spacing: -0.5px; line-height: 1.15; margin-bottom: 16px; }
+        .terms-promo-content p { font-size: 15px; color: rgba(200,225,245,0.62); line-height: 1.78; margin-bottom: 28px; max-width: 500px; }
+        .terms-cta {
+            display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: #fff;
+            background: linear-gradient(135deg, rgba(5,204,211,0.14), rgba(26,127,255,0.14));
+            border: 1px solid rgba(5,204,211,0.38); padding: 12px 24px; border-radius: 0;
+            font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase;
+            transition: background 0.22s, box-shadow 0.22s, transform 0.15s; align-self: flex-start;
+        }
+        .terms-cta:hover {
+            background: linear-gradient(135deg, rgba(5,204,211,0.26), rgba(26,127,255,0.26));
+            box-shadow: 0 0 22px rgba(5,204,211,0.2); transform: translateX(5px);
+        }
+
+        /* ── WEBINARS ── */
+        .webinars-section { background: rgba(0,0,0,0.72); padding: 60px 40px 80px; }
+        .webinars-section h2 { text-align: center; font-size: 28px; color: #fff; margin-bottom: 36px; }
+        .webinar-grid { max-width: 900px; margin: 0 auto; display: grid; gap: 16px; }
         .webinar-card {
             background: linear-gradient(135deg, rgba(5,204,211,0.05), rgba(26,127,255,0.04));
             border: 1px solid rgba(5,204,211,0.1);
-            border-radius: 12px;
-            padding: 20px 24px;
+            border-radius: 12px; padding: 20px 24px; backdrop-filter: blur(4px);
             transition: border-color 0.2s, background 0.2s;
+            text-decoration: none; display: block;
         }
-        .webinar-card:hover {
-            border-color: rgba(5,204,211,0.3);
-            background: linear-gradient(135deg, rgba(5,204,211,0.09), rgba(26,127,255,0.07));
+        .webinar-card:hover { border-color: rgba(5,204,211,0.35); background: linear-gradient(135deg, rgba(5,204,211,0.09), rgba(26,127,255,0.07)); }
+        .webinar-card h3 { font-size: 17px; color: #fff; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+        .webinar-card h3 .yt-badge {
+            font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+            color: rgba(5,204,211,0.65); font-weight: 400; border: 1px solid rgba(5,204,211,0.25);
+            padding: 2px 8px; border-radius: 20px;
         }
-        .webinar-card h3 { font-size: 17px; color: #fff; margin-bottom: 6px; }
-        .webinar-card p { font-size: 14px; color: rgba(200,225,245,0.72); line-height: 1.6; }
+        .webinar-card p { font-size: 14px; color: rgba(200,225,245,0.7); line-height: 1.6; }
+        .webinar-card .watch-link {
+            display: inline-flex; align-items: center; gap: 6px; margin-top: 12px;
+            font-size: 13px; color: rgba(5,204,211,0.75); letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+        .webinar-card:hover .watch-link { color: #05ccd3; }
 
-        /* ── Footer ── */
+        /* ── FOOTER ── */
         footer {
-            background: #000;
-            border-top: 1px solid rgba(5,204,211,0.12);
-            padding: 60px 40px 30px;
-            opacity: 0;
-            transform: translateY(30px);
+            background: rgba(0,0,0,0.88); border-top: 1px solid rgba(5,204,211,0.12);
+            padding: 60px 40px 30px; opacity: 0; transform: translateY(30px);
             transition: opacity 0.7s ease, transform 0.7s ease;
         }
         footer.visible { opacity: 1; transform: translateY(0); }
-
         .footer-grid {
-            max-width: 1100px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 48px;
-            padding-bottom: 40px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            max-width: 1100px; margin: 0 auto;
+            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         .footer-brand img { height: 46px; margin-bottom: 14px; display: block; }
-        .footer-brand p { font-size: 13px; color: rgba(200,225,245,0.55); line-height: 1.7; }
-        .footer-brand .contact-info { margin-top: 18px; }
-        .footer-brand .contact-info p { color: rgba(200,225,245,0.5); font-size: 13px; margin-bottom: 4px; }
-        .footer-brand .contact-info a { color: rgba(5,204,211,0.8); text-decoration: none; }
-        .footer-brand .contact-info a:hover { color: #05ccd3; }
-
-        .footer-col h4 {
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: rgba(5,204,211,0.7);
-            margin-bottom: 16px;
-        }
-        .footer-col a {
-            display: block;
-            color: rgba(200,225,245,0.6);
-            text-decoration: none;
-            font-size: 14px;
-            margin-bottom: 10px;
-            transition: color 0.2s;
-        }
-        .footer-col a:hover { color: #fff; }
-
+        .footer-brand > p { font-size: 13px; color: rgba(200,225,245,0.52); line-height: 1.7; }
+        .footer-contact { margin-top: 18px; }
+        .footer-contact p { color: rgba(200,225,245,0.48); font-size: 13px; margin-bottom: 4px; }
+        .footer-contact a { color: rgba(5,204,211,0.78); text-decoration: none; }
+        .footer-contact a:hover { color: #05ccd3; }
         .footer-social { margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap; }
         .social-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 8px;
+            width: 38px; height: 38px; border-radius: 8px;
             border: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-size: 16px;
-            color: rgba(200,225,245,0.7);
-            transition: background 0.2s, border-color 0.2s, color 0.2s;
-            background: rgba(255,255,255,0.02);
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; font-size: 14px; color: rgba(200,225,245,0.65);
+            background: rgba(255,255,255,0.02); transition: background 0.2s, border-color 0.2s, color 0.2s;
         }
-        .social-icon:hover {
-            background: rgba(5,204,211,0.1);
-            border-color: rgba(5,204,211,0.4);
-            color: #fff;
-        }
-
-        .footer-bottom {
-            max-width: 1100px;
-            margin: 24px auto 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .footer-bottom p { font-size: 12px; color: rgba(200,225,245,0.35); }
+        .social-icon:hover { background: rgba(5,204,211,0.1); border-color: rgba(5,204,211,0.4); color: #fff; }
+        .footer-col h4 { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: rgba(5,204,211,0.68); margin-bottom: 16px; }
+        .footer-col a { display: block; color: rgba(200,225,245,0.58); text-decoration: none; font-size: 14px; margin-bottom: 10px; transition: color 0.2s; }
+        .footer-col a:hover { color: #fff; }
+        .footer-bottom { max-width: 1100px; margin: 24px auto 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        .footer-bottom p { font-size: 12px; color: rgba(200,225,245,0.32); }
         .footer-bottom-links { display: flex; gap: 20px; }
-        .footer-bottom-links a {
-            font-size: 12px;
-            color: rgba(200,225,245,0.35);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .footer-bottom-links a:hover { color: rgba(5,204,211,0.8); }
+        .footer-bottom-links a { font-size: 12px; color: rgba(200,225,245,0.32); text-decoration: none; transition: color 0.2s; }
+        .footer-bottom-links a:hover { color: rgba(5,204,211,0.78); }
 
+        /* RESPONSIVE */
         @media (max-width: 860px) {
             .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+            .modal-body { padding: 28px 22px 40px; }
+            .modal-icon-ring { width: 88px; height: 88px; font-size: 42px; }
+            .terms-promo { flex-direction: column; }
+            .terms-promo-img { width: 100%; min-width: unset; min-height: 160px; border-right: none; border-bottom: 1px solid rgba(5,204,211,0.14); }
         }
         @media (max-width: 560px) {
             .footer-grid { grid-template-columns: 1fr; }
-            .cards-section, .webinars-section { padding-left: 18px; padding-right: 18px; }
+            .cards-section, .webinars-section, .terms-promo-wrap { padding-left: 18px; padding-right: 18px; }
             .topbar-left span { display: none; }
-            .card-expand-inner { flex-direction: column; }
-            .card-expand-img { width: 100%; min-width: unset; }
+            .modal-header { padding: 18px 18px 14px; }
+            .terms-promo-content { padding: 30px 26px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ── Topbar ── -->
+    <canvas id="starCanvas"></canvas>
+
+    <!-- TOPBAR -->
     <header class="topbar">
         <div class="topbar-left">
             <a href="Index.html"><img src="Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg" alt="CS-Sensei logo"></a>
@@ -422,7 +397,7 @@
         </div>
     </header>
 
-    <!-- ── Video Hero ── -->
+    <!-- VIDEO HERO -->
     <div class="video-hero" id="videoHero">
         <video autoplay muted loop playsinline id="myVideo" aria-hidden="true">
             <source src="Background.mp4" type="video/mp4">
@@ -434,159 +409,135 @@
         </div>
     </div>
 
-    <!-- ── Scroll reveal bridge text ── -->
+    <!-- SCROLL REVEAL -->
     <div class="scroll-reveal-section">
-        <p class="scroll-reveal-text" id="revealText">What makes us different?</p>
+        <p class="scroll-reveal-text" id="revealText">What Makes Us Different?</p>
     </div>
 
-    <!-- ── Pop-out Cards ── -->
+    <!-- CARDS -->
     <section class="cards-section">
         <p class="cards-section-title">Our Approach</p>
         <div class="cards-grid">
 
-            <!-- Card 1 -->
-            <div class="card-wrap">
-                <div class="card" id="card-0" onclick="toggleCard(0)">
-                    <div class="card-inner">
-                        <span class="card-icon">🛡️</span>
-                        <div class="card-title">What Makes Us Different?</div>
-                        <p class="card-teaser">Ethics-first mentorship from independent, objective professionals who build TRUST alongside TOOLS.</p>
-                        <div class="card-hint">Learn more</div>
-                    </div>
-                    <div class="card-expand" id="expand-0">
-                        <div class="card-expand-inner">
-                            <div class="card-expand-img">🛡️</div>
-                            <div class="card-expand-text">
-                                <h3>Trust Over Tools</h3>
-                                <p>Our mentors are independent, objective, and ethics‑focused. We demonstrate by example why it's critically important to build TRUST, not just be proficient with TOOLS. Real cybersecurity professionals understand that technical skill without ethical grounding creates risk — not security.</p>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Card 0: What Makes Us Different -->
+            <div class="card" onclick="openModal(0)">
+                <div class="card-inner">
+                    <span class="card-icon">🛡️</span>
+                    <div class="card-title">What Makes Us Different?</div>
+                    <p class="card-teaser">Our mentors are independent, objective, and ethics‑focused. We demonstrate by example why it's critically important to build TRUST, not just be proficient with TOOLS.</p>
+                    <div class="card-hint">Click to explore →</div>
                 </div>
             </div>
 
-            <!-- Card 2 -->
-            <div class="card-wrap">
-                <div class="card" id="card-1" onclick="toggleCard(1)">
-                    <div class="card-inner">
-                        <span class="card-icon">🚨</span>
-                        <div class="card-title">Real Incident Response Experience</div>
-                        <p class="card-teaser">Gain hands-on experience through our active Incident Response Team — not simulations.</p>
-                        <div class="card-hint">Learn more</div>
-                    </div>
-                    <div class="card-expand" id="expand-1">
-                        <div class="card-expand-inner">
-                            <div class="card-expand-img">🚨</div>
-                            <div class="card-expand-text">
-                                <h3>Live Case Work</h3>
-                                <p>Our mentorship team is unique in the industry, offering mentees REAL EXPERIENCE through our Incident Response Team. Email us for info and opportunities to participate in real case work. There's no better learning environment than responding to live incidents alongside seasoned professionals.</p>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Card 1: Incident Response -->
+            <div class="card" onclick="openModal(1)">
+                <div class="card-inner">
+                    <span class="card-icon">🚨</span>
+                    <div class="card-title">Real Incident Response Experience</div>
+                    <p class="card-teaser">Our mentorship team is unique in the industry, offering mentees REAL EXPERIENCE, through our Incident Response Team! Email us for info!</p>
+                    <div class="card-hint">Click to explore →</div>
                 </div>
             </div>
 
-            <!-- Card 3 -->
-            <div class="card-wrap">
-                <div class="card" id="card-2" onclick="toggleCard(2)">
-                    <div class="card-inner">
-                        <span class="card-icon">⚖️</span>
-                        <div class="card-title">Code of Ethics</div>
-                        <p class="card-teaser">Every lesson, exercise, and assessment integrates ethical decision-making from day one.</p>
-                        <div class="card-hint">Learn more</div>
-                    </div>
-                    <div class="card-expand" id="expand-2">
-                        <div class="card-expand-inner">
-                            <div class="card-expand-img">⚖️</div>
-                            <div class="card-expand-text">
-                                <h3>Ethics in Everything</h3>
-                                <p>Mentors and mentees alike agree to abide by our Code of Ethics. Ethical decision-making is integrated into every lesson, exercise, and assessment. We believe that the most skilled cybersecurity professionals are also its most ethical — and we train accordingly.</p>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Card 2: Code of Ethics -->
+            <div class="card" onclick="openModal(2)">
+                <div class="card-inner">
+                    <span class="card-icon">⚖️</span>
+                    <div class="card-title">Code of Ethics</div>
+                    <p class="card-teaser">Every lesson, exercise, and assessment integrates ethical decision-making from day one.</p>
+                    <div class="card-hint">Click to explore →</div>
                 </div>
             </div>
 
-            <!-- Card 4 -->
-            <div class="card-wrap">
-                <div class="card" id="card-3" onclick="toggleCard(3)">
-                    <div class="card-inner">
-                        <span class="card-icon">💼</span>
-                        <div class="card-title">Think & Speak Like Your CISO</div>
-                        <p class="card-teaser">Understand Business Risk, Bottom Line, and Lessons Learned — from a service provider's lens.</p>
-                        <div class="card-hint">Learn more</div>
-                    </div>
-                    <div class="card-expand" id="expand-3">
-                        <div class="card-expand-inner">
-                            <div class="card-expand-img">💼</div>
-                            <div class="card-expand-text">
-                                <h3>Executive-Level Thinking</h3>
-                                <p>Learn to think and speak like your CISO. We cover activities from the perspective of a service provider and focus on "Business Risk", "Bottom Line", and "Lessons Learned". Understanding how security decisions affect the business is what separates good practitioners from great ones.</p>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Card 3: Think Like CISO -->
+            <div class="card" onclick="openModal(3)">
+                <div class="card-inner">
+                    <span class="card-icon">💼</span>
+                    <div class="card-title">Think &amp; Speak Like Your CISO</div>
+                    <p class="card-teaser">Learn to think and speak like your CISO. We cover all activities from the perspective of a service provider, and focus on "Business Risk", "Bottom Line", and "Lessons Learned".</p>
+                    <div class="card-hint">Click to explore →</div>
                 </div>
             </div>
 
         </div>
     </section>
 
-    <!-- ── Webinars ── -->
+    <!-- TERMS PROMO -->
+    <div class="terms-promo-wrap">
+        <div class="terms-promo" id="termsPromo">
+            <div class="terms-promo-img">
+                <div class="terms-img-placeholder">
+                    <span>📖</span>
+                    <p>Cybersecurity Terms</p>
+                </div>
+            </div>
+            <div class="terms-promo-content">
+                <p class="terms-eyebrow">Reference Library</p>
+                <h2>Master the Language<br>of CyberSecurity</h2>
+                <p>Our comprehensive terms glossary covers everything from Advanced Persistent Threats to Zero Trust architecture. Whether you're starting out or prepping for a certification, having the right vocabulary is mission-critical.</p>
+                <a class="terms-cta" href="Cybersecurity Terms/index.html">Browse the Glossary &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- WEBINARS -->
     <section class="webinars-section">
         <h2>Recent Webinars</h2>
         <div class="webinar-grid">
-            <article class="webinar-card">
-                <h3>CyberSecurity as a Career in 2023</h3>
+
+            <a class="webinar-card" href="https://www.youtube.com/watch?v=5deKMTOf_7Y" target="_blank" rel="noopener">
+                <h3>CyberSecurity as a Career in 2023 <span class="yt-badge">▶ YouTube</span></h3>
                 <p>Overview of career paths, certifications, and market demand — recorded webinar.</p>
-            </article>
-            <article class="webinar-card">
-                <h3>How To Get Experience BEFORE You Get The Job!</h3>
+                <span class="watch-link">Watch on YouTube →</span>
+            </a>
+
+            <a class="webinar-card" href="https://www.youtube.com/watch?v=0kfurpA_Avs" target="_blank" rel="noopener">
+                <h3>How To Get Experience BEFORE You Get The Job! <span class="yt-badge">▶ YouTube</span></h3>
                 <p>Practical steps and programs to build demonstrable experience and a portfolio that hiring managers notice.</p>
-            </article>
-            <article class="webinar-card">
-                <h3>Many Skills are Needed for CyberSecurity Jobs!</h3>
+                <span class="watch-link">Watch on YouTube →</span>
+            </a>
+
+            <a class="webinar-card" href="https://www.youtube.com/watch?v=uoiun6fgL1w" target="_blank" rel="noopener">
+                <h3>Many Skills are Needed for CyberSecurity Jobs! <span class="yt-badge">▶ YouTube</span></h3>
                 <p>From communication to toolchains, the webinar explores the variety of skills hiring teams expect.</p>
-            </article>
-            <article class="webinar-card">
-                <h3>ALWAYS ask "SHOULD I?!?" — The Ethics of CyberSecurity</h3>
+                <span class="watch-link">Watch on YouTube →</span>
+            </a>
+
+            <a class="webinar-card" href="https://www.youtube.com/watch?v=rx0rsS4OWN4" target="_blank" rel="noopener">
+                <h3>ALWAYS ask "SHOULD I?!?" — The Ethics of CyberSecurity <span class="yt-badge">▶ YouTube</span></h3>
                 <p>A deep dive into ethical decision-making with real-world case studies used in our mentorship practice.</p>
-            </article>
+                <span class="watch-link">Watch on YouTube →</span>
+            </a>
+
         </div>
     </section>
 
-    <!-- ── Footer ── -->
+    <!-- FOOTER -->
     <footer id="siteFooter">
         <div class="footer-grid">
-
-            <!-- Brand + Contact Info -->
             <div class="footer-brand">
                 <img src="Images/82ed5c805539aaf8e18540b6f9a8a915_758x186_fit.jpg" alt="CS-Sensei logo">
                 <p>CS-Sensei is a cybersecurity mentorship program built by practitioners, for practitioners. We bridge the gap between academic knowledge and real-world security operations.</p>
-                <div class="contact-info">
-                    <p>📍 United States</p>
-                    <p>📧 <a href="mailto:info@cs-sensei.com">info@cs-sensei.com</a></p>
-                    <p>📞 <a href="tel:+15550000000">(555) 000-0000</a></p>
+                <div class="footer-contact">
+                    <p>&#128205; United States</p>
+                    <p>&#128231; <a href="mailto:info@cs-sensei.com">info@cs-sensei.com</a></p>
+                    <p>&#128222; <a href="tel:+15550000000">(555) 000-0000</a></p>
                 </div>
-                <!-- Social Icons -->
                 <div class="footer-social">
-                    <a class="social-icon" href="#" aria-label="LinkedIn" title="LinkedIn">in</a>
-                    <a class="social-icon" href="#" aria-label="Twitter/X" title="Twitter / X">𝕏</a>
-                    <a class="social-icon" href="#" aria-label="YouTube" title="YouTube">▶</a>
-                    <a class="social-icon" href="#" aria-label="GitHub" title="GitHub">
-                        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    <a class="social-icon" href="#" aria-label="LinkedIn">in</a>
+                    <a class="social-icon" href="#" aria-label="Twitter/X">&#120143;</a>
+                    <a class="social-icon" href="#" aria-label="YouTube">&#9654;</a>
+                    <a class="social-icon" href="#" aria-label="GitHub">
+                        <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
                     </a>
                 </div>
             </div>
-
-            <!-- Navigation -->
             <div class="footer-col">
                 <h4>Navigate</h4>
                 <a href="Index.html">Home</a>
-                <a href="Cybersecurity Terms/index.html">Terms & Glossary</a>
+                <a href="Cybersecurity Terms/index.html">Terms &amp; Glossary</a>
                 <a href="contact.html">Contact</a>
             </div>
-
-            <!-- Services -->
             <div class="footer-col">
                 <h4>Services</h4>
                 <a href="#">Mentorship Program</a>
@@ -594,8 +545,6 @@
                 <a href="#">Webinars</a>
                 <a href="#">Ethics Training</a>
             </div>
-
-            <!-- Legal -->
             <div class="footer-col">
                 <h4>Legal</h4>
                 <a href="#">Privacy Policy</a>
@@ -603,11 +552,9 @@
                 <a href="#">Disclaimer</a>
                 <a href="#">Cookie Policy</a>
             </div>
-
         </div>
-
         <div class="footer-bottom">
-            <p>© 2025 CS-Sensei CyberSecurity Mentorship Program. All rights reserved.</p>
+            <p>&copy; 2025 CS-Sensei CyberSecurity Mentorship Program. All rights reserved.</p>
             <div class="footer-bottom-links">
                 <a href="#">Privacy Policy</a>
                 <a href="#">Terms of Service</a>
@@ -616,62 +563,246 @@
         </div>
     </footer>
 
+    <!-- FULLSCREEN MODAL -->
+    <div class="modal-backdrop" id="modalBackdrop" onclick="closeModalOutside(event)">
+        <div class="modal-panel" id="modalPanel">
+            <div class="modal-header">
+                <div class="modal-header-left">
+                    <span class="modal-header-icon" id="modalIcon"></span>
+                    <h2 id="modalTitle"></h2>
+                </div>
+                <button class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+    </div>
+
     <script>
-        /* ── Scroll: video fades, hero text lifts, reveal text appears ── */
-        const video = document.getElementById('myVideo');
-        const heroText = document.getElementById('heroText');
-        const videoHero = document.getElementById('videoHero');
-        const revealText = document.getElementById('revealText');
-        const footer = document.getElementById('siteFooter');
+    /* ═══════════════════════════════════════════
+       CONSTELLATION
+    ═══════════════════════════════════════════ */
+    (function () {
+        const canvas = document.getElementById('starCanvas');
+        const ctx    = canvas.getContext('2d');
+        let W, H;
+        function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize);
+        resize();
 
-        function onScroll() {
-            const scrollY = window.scrollY;
-            const heroH = videoHero.offsetHeight;
+        const NODE_COUNT = Math.min(70, Math.floor((W * H) / 18000));
 
-            // Progress 0→1 over first heroHeight pixels of scroll
-            const prog = Math.min(scrollY / heroH, 1);
-
-            // Video fades out
-            video.style.opacity = 1 - prog;
-
-            // Hero text lifts up and fades
-            heroText.style.transform = `translateY(${-prog * 80}px)`;
-            heroText.style.opacity = 1 - prog * 1.4;
-
-            // Scroll-reveal text
-            if (scrollY > heroH * 0.3) {
-                revealText.classList.add('visible');
-            } else {
-                revealText.classList.remove('visible');
+        class Node {
+            constructor() {
+                this.x  = Math.random() * W;
+                this.y  = Math.random() * H;
+                this.vx = (Math.random() - 0.5) * 0.12;
+                this.vy = (Math.random() - 0.5) * 0.12;
+                this.r  = 1 + Math.random() * 1.8;
+                this.phase      = Math.random() * Math.PI * 2;
+                this.phaseSpeed = 0.004 + Math.random() * 0.006;
+                this.teal = Math.random() > 0.35;
             }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                if (this.x < -10)  this.x = W + 10;
+                if (this.x > W+10) this.x = -10;
+                if (this.y < -10)  this.y = H + 10;
+                if (this.y > H+10) this.y = -10;
+                this.phase += this.phaseSpeed;
+            }
+            draw() {
+                const pulse = 0.35 + 0.45 * (0.5 + 0.5 * Math.sin(this.phase));
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                ctx.fillStyle = this.teal
+                    ? `rgba(5,204,211,${pulse.toFixed(2)})`
+                    : `rgba(100,180,255,${pulse.toFixed(2)})`;
+                ctx.fill();
+            }
+        }
 
-            // Footer pop-in
-            const docH = document.documentElement.scrollHeight;
-            const winH = window.innerHeight;
-            if (scrollY + winH > docH - 120) {
-                footer.classList.add('visible');
+        const nodes    = Array.from({ length: NODE_COUNT }, () => new Node());
+        const MAX_DIST = 160;
+
+        function drawLines() {
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const d  = Math.sqrt(dx * dx + dy * dy);
+                    if (d < MAX_DIST) {
+                        const alpha = (1 - d / MAX_DIST) * 0.18;
+                        ctx.beginPath();
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        ctx.strokeStyle = `rgba(5,204,211,${alpha.toFixed(3)})`;
+                        ctx.lineWidth = 0.7;
+                        ctx.stroke();
+                    }
+                }
             }
         }
 
-        window.addEventListener('scroll', onScroll, { passive: true });
-
-        /* ── Card expand toggle ── */
-        function toggleCard(index) {
-            const card = document.getElementById('card-' + index);
-            const expand = document.getElementById('expand-' + index);
-            const isOpen = expand.classList.contains('open');
-
-            // Close all
-            document.querySelectorAll('.card-expand').forEach(e => e.classList.remove('open'));
-            document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
-
-            // Open clicked if it wasn't open
-            if (!isOpen) {
-                expand.classList.add('open');
-                card.classList.add('open');
-            }
+        function loop() {
+            ctx.clearRect(0, 0, W, H);
+            nodes.forEach(n => { n.update(); n.draw(); });
+            drawLines();
+            requestAnimationFrame(loop);
         }
+        loop();
+    })();
+
+    /* ═══════════════════════════════════════════
+       MODAL DATA
+       imgSrc      = left-column image URL ('' = show icon fallback)
+       extraImg    = image placeholder shown below the body text (true/false)
+       extraImgSrc = URL for that extra image ('' = placeholder)
+    ═══════════════════════════════════════════ */
+    const modalData = [
+        {
+            icon: '🛡️',
+            title: 'What Makes Us Different?',
+            subtitle: 'Trust Over Tools',
+            imgSrc: '',
+            bodyHTML: `
+                <p>Our mentors are independent, objective, and ethics‑focused. We demonstrate by example why it's critically important to build TRUST, not just be proficient with TOOLS.</p>
+            `,
+            extraImg: true,
+            extraImgSrc: 'https://cs-sensei.org/gallery/CS-SENSEI%20MENTORSHIP%20TEAM-ts1685625218.png'   /* ← drop your image URL here when ready */
+        },
+        {
+            icon: '🚨',
+            title: 'Real Incident Response Experience',
+            subtitle: 'Live Case Work',
+            imgSrc: '',       /* ← add image URL here when ready */
+            bodyHTML: `
+                <p>Our mentorship team is unique in the industry, offering mentees REAL EXPERIENCE, through our Incident Response Team!</p>
+                <p><a href="contact.html" style="color:#05ccd3;">Email us for info!</a></p>
+            `,
+            extraImg: true,
+            extraImgSrc: 'Images/incidentresponse.png'
+        },
+        {
+            icon: '⚖️',
+            title: 'Code of Ethics',
+            subtitle: '先生 CyberSecurity Sensei',
+            imgSrc: 'Images/ethicscompass.png',       /* ← add image URL here when ready */
+            bodyHTML: `
+                <p>The primary goal of the CyberSecurity Sensei Cohort (CS-Sensei) is to offer opportunities for skills acquisition and advancement in the cybersecurity arena. CS-Sensei adopts and adheres to practices that will ensure the confidentiality, integrity, and availability of organizational information resources.</p>
+                <p>To achieve this goal, CS-Sensei members and interns must reflect the highest standards of ethical conduct. Therefore, CS-Sensei has established the following Code of Ethics and requires its observance as a prerequisite for membership and affiliation.</p>
+                <p><strong style="color:#fff;">As a CS-Sensei Cohort member, mentor/mentee, or intern, I hereby certify that I will:</strong></p>
+                <ul>
+                    <li>Act legally, with honor, responsibility, and honesty as I implement the knowledge I have gained and continue to gain</li>
+                    <li>Perform all professional activities and duties in accordance with all applicable laws and the highest ethical principles</li>
+                    <li>Promote generally accepted information security current best practices and standards</li>
+                    <li>Maintain appropriate confidentiality of proprietary or otherwise sensitive information encountered in the course of professional activities</li>
+                    <li>Refrain from any activities which might constitute a conflict of interest or otherwise damage the reputation of or is detrimental to employers, the information security profession, or the Cohort</li>
+                    <li>Not intentionally injure or impugn the professional reputation or practice of colleagues, clients, or employers</li>
+                </ul>
+            `,
+            extraImg: true,
+            extraImgSrc: 'Images/ethicscompass.png'   /* ← drop your image URL here when ready */
+        },
+        {
+            icon: '💼',
+            title: 'Think & Speak Like Your CISO',
+            subtitle: 'Executive-Level Thinking',
+            imgSrc: 'https://cs-sensei.org/Transport/',  /* ← replace with direct image URL */
+            bodyHTML: `
+                <p>Learn to think and speak like your CISO. We cover all activities from the perspective of a service provider, and focus on "Business Risk", "Bottom Line", and "Lessons Learned".</p>
+                <p>You will find the latest information about us on this page. Our company is constantly evolving and growing. We provide wide range of services. Our mission is to provide best solution that helps everyone. If you want to contact us, please fill the contact form on our website. We wish you a good day...</p>
+                <p>You will find the latest information about us on this page. Our company is constantly evolving and growing. We provide wide range of services. Our mission is to provide best solution that helps everyone. If you want to contact us, please fill the contact form on our website. We wish you a good day...</p>
+            `,
+            extraImg: true,
+            extraImgSrc: 'Images/chalkboardthing.png'   /* ← drop your image URL here when ready */
+        }
+    ];
+
+    function buildModalBody(d) {
+        /* Centered icon or image at top */
+        const iconHTML = d.imgSrc
+            ? `<div class="modal-icon-ring">
+                   <img src="${d.imgSrc}" alt="${d.title}"
+                        onerror="this.parentElement.innerHTML='${d.icon}'">
+               </div>`
+            : `<div class="modal-icon-ring">${d.icon}</div>`;
+
+        /* Extra image placeholder below text */
+        const extraHTML = d.extraImg ? `
+            <div class="modal-extra-img">
+                ${d.extraImgSrc
+                    ? `<img src="${d.extraImgSrc}" alt="Supporting image">`
+                    : `<div class="extra-placeholder">
+                           <span>🖼️</span>
+                           <p>Image placeholder — drop your URL into extraImgSrc</p>
+                       </div>`
+                }
+            </div>` : '';
+
+        return `
+            ${iconHTML}
+            <p class="modal-subtitle">${d.subtitle}</p>
+            <div class="modal-divider"></div>
+            <div class="modal-text-col">
+                ${d.bodyHTML}
+                ${extraHTML}
+            </div>`;
+    }
+
+    function openModal(index) {
+        const d = modalData[index];
+        document.getElementById('modalIcon').textContent  = d.icon;
+        document.getElementById('modalTitle').textContent = d.title;
+        document.getElementById('modalBody').innerHTML    = buildModalBody(d);
+        document.getElementById('modalBackdrop').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        document.getElementById('modalBackdrop').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    function closeModalOutside(e) {
+        if (e.target === document.getElementById('modalBackdrop')) closeModal();
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    /* ═══════════════════════════════════════════
+       SCROLL EFFECTS
+    ═══════════════════════════════════════════ */
+    const video      = document.getElementById('myVideo');
+    const heroText   = document.getElementById('heroText');
+    const videoHero  = document.getElementById('videoHero');
+    const revealText = document.getElementById('revealText');
+    const footer     = document.getElementById('siteFooter');
+    const termsPromo = document.getElementById('termsPromo');
+
+    function onScroll() {
+        const scrollY = window.scrollY;
+        const heroH   = videoHero.offsetHeight;
+
+        const vidProg = Math.min(scrollY / (heroH * 0.5), 1);
+        video.style.opacity = (1 - vidProg).toFixed(3);
+
+        const textProg = Math.min(scrollY / heroH, 1);
+        heroText.style.transform = `translateY(${-textProg * 90}px)`;
+        heroText.style.opacity   = (1 - textProg * 1.6).toFixed(3);
+
+        revealText.classList.toggle('visible', scrollY > heroH * 0.22);
+
+        if (termsPromo.getBoundingClientRect().top < window.innerHeight * 0.82)
+            termsPromo.classList.add('revealed');
+
+        if (scrollY + window.innerHeight > document.documentElement.scrollHeight - 160)
+            footer.classList.add('visible');
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
     </script>
-
 </body>
 </html>
